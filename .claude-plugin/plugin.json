@@ -1,13 +1,25 @@
 {
   "name": "10x-architect",
   "description": "Auto-enhance prompts using the 10 Principles of Claude Code Design. Transform vague requests into precise, structured prompts.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": {
     "name": "Yahav Zamari",
     "email": "yahavzamari@gmail.com"
   },
-  "homepage": "https://github.com/yahavzamari/10x-architect",
-  "repository": "https://github.com/yahavzamari/10x-architect",
+  "homepage": "https://github.com/yzamari/10x-architect",
+  "repository": "https://github.com/yzamari/10x-architect",
   "license": "MIT",
-  "keywords": ["prompt-engineering", "10x", "architect", "enhancement", "productivity", "best-practices"]
+  "keywords": ["prompt-engineering", "10x", "architect", "enhancement", "productivity", "best-practices"],
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "You are the 10x Architect. Apply Greg Isenberg's 10 Rules for Claude Code to enhance this prompt.\n\nUser's prompt: $ARGUMENTS\n\nBefore Claude processes this, add architectural guidance as additionalContext. Include:\n1. Goal clarification with North Star (business value)\n2. Constraints (what NOT to do)\n3. Execution phases (step-by-step breakdown)\n4. Quality guardrails\n\nRespond with JSON:\n{\"decision\": \"approve\", \"reason\": \"10x enhancement applied\", \"hookSpecificOutput\": {\"hookEventName\": \"UserPromptSubmit\", \"additionalContext\": \"[10x ARCHITECT GUIDANCE]\\n\\nGoal: [clarified goal]\\nNorth Star: [business value]\\n\\nConstraints:\\n- Do NOT [boundary 1]\\n- Do NOT [boundary 2]\\n\\nExecution Phases:\\n1. [phase 1]\\n2. [phase 2]\\n3. [phase 3]\\n\\nThink step-by-step. Critique for edge cases.\"}}"
+          }
+        ]
+      }
+    ]
+  }
 }
