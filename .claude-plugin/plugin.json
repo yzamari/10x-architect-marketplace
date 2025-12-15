@@ -1,0 +1,13 @@
+{
+  "name": "10x-architect",
+  "description": "Auto-enhance prompts using the 10 Principles of Claude Code Design. Transform vague requests into precise, structured prompts.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Yahav Zamari",
+    "email": "yahavzamari@gmail.com"
+  },
+  "homepage": "https://github.com/yahavzamari/10x-architect",
+  "repository": "https://github.com/yahavzamari/10x-architect",
+  "license": "MIT",
+  "keywords": ["prompt-engineering", "10x", "architect", "enhancement", "productivity", "best-practices"]
+}
