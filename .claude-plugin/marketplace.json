@@ -9,7 +9,7 @@
     {
       "name": "10x-architect",
       "description": "Auto-enhance prompts using Greg Isenberg's 10 Rules for Claude Code. Transform vague requests into precise, structured prompts.",
-      "version": "1.7.1",
+      "version": "1.8.0",
       "source": "./",
       "author": {
         "name": "Yahav Zamari",
