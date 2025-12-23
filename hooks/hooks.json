@@ -1,12 +1,14 @@
 {
-  "UserPromptSubmit": [
-    {
-      "hooks": [
-        {
-          "type": "command",
-          "command": "echo '<10x-architect>\nFollow these principles:\n1. GOAL: Identify clear goal\n2. CONSTRAINTS: Define what NOT to do\n3. PHASES: Break into steps\n4. TDD: Write tests FIRST\n5. DOCS: Add JSDoc/docstrings\n6. SOLID: Apply SOLID principles\nAcknowledge following 10x Architect.\n</10x-architect>'"
-        }
-      ]
-    }
-  ]
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '<10x-architect>Follow: 1.GOAL 2.CONSTRAINTS 3.PHASES 4.TDD 5.DOCS 6.SOLID. Acknowledge 10x Architect.</10x-architect>'"
+          }
+        ]
+      }
+    ]
+  }
 }
