@@ -1,0 +1,15 @@
+{
+  "description": "10x Architect plugin hooks - enhances prompts with best practices",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat << 'EOF'\n<10x-architect-enhancement>\nYou MUST follow these principles for this task:\n\n1. GOAL CLARITY: Identify the clear goal and business value before starting\n2. CONSTRAINTS: Define what NOT to do (at least 2-3 boundaries)\n3. EXECUTION PHASES: Break work into 3-6 logical steps\n4. TDD: Write tests FIRST (RED), then implement (GREEN), then refactor\n5. DOCUMENTATION: Add JSDoc/docstrings to all functions\n6. SOLID: Apply Single Responsibility, Open/Closed, Liskov, Interface Segregation, Dependency Inversion\n\nAcknowledge you're following 10x Architect principles in your response.\n</10x-architect-enhancement>\nEOF"
+          }
+        ]
+      }
+    ]
+  }
+}

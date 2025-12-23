@@ -1,7 +1,7 @@
 {
   "name": "10x-architect",
   "description": "Auto-enhance prompts using the 10 Principles of Claude Code Design. Transform vague requests into precise, structured prompts with TDD, documentation, and SOLID principles.",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "author": {
     "name": "Yahav Zamari",
     "email": "yahavzamari@gmail.com"
@@ -10,16 +10,5 @@
   "repository": "https://github.com/yzamari/10x-architect",
   "license": "MIT",
   "keywords": ["prompt-engineering", "10x", "architect", "enhancement", "productivity", "best-practices", "tdd", "solid", "oop"],
-  "hooks": {
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "cat << 'EOF'\n<10x-architect-enhancement>\nYou MUST follow these principles for this task:\n\n1. GOAL CLARITY: Identify the clear goal and business value before starting\n2. CONSTRAINTS: Define what NOT to do (at least 2-3 boundaries)\n3. EXECUTION PHASES: Break work into 3-6 logical steps\n4. TDD: Write tests FIRST (RED), then implement (GREEN), then refactor\n5. DOCUMENTATION: Add JSDoc/docstrings to all functions\n6. SOLID: Apply Single Responsibility, Open/Closed, Liskov, Interface Segregation, Dependency Inversion\n\nAcknowledge you're following 10x Architect principles in your response.\n</10x-architect-enhancement>\nEOF"
-          }
-        ]
-      }
-    ]
-  }
+  "hooks": "./hooks/hooks.json"
 }
