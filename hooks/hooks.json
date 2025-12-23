@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cat << 'EOF'\n{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"<10x-architect-rules>\\nFor ALL tasks in this session, you MUST follow these principles:\\n1. GOAL: Identify clear goal and business value\\n2. CONSTRAINTS: Define what NOT to do (2-3 boundaries)\\n3. PHASES: Break into 3-6 logical steps\\n4. TDD: Write tests FIRST (RED-GREEN-REFACTOR)\\n5. DOCS: Add JSDoc/docstrings to all functions\\n6. SOLID: Apply Single Responsibility, Open/Closed, Liskov, Interface Segregation, Dependency Inversion\\n\\nAcknowledge following 10x Architect principles at the start of your responses.\\n</10x-architect-rules>\"}}\nEOF"
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh"
           }
         ]
       }
