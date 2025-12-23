@@ -1,7 +1,7 @@
 {
   "name": "10x-architect",
   "description": "Auto-enhance prompts using the 10 Principles of Claude Code Design. Transform vague requests into precise, structured prompts with TDD, documentation, and SOLID principles.",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "author": {
     "name": "Yahav Zamari",
     "email": "yahavzamari@gmail.com"
@@ -21,12 +21,5 @@
         ]
       }
     ]
-  },
-  "skills": [
-    {
-      "name": "architect",
-      "description": "Auto-enhance prompts using Greg Isenberg's 10 Rules for Claude Code. Invoke with \"architect [task]\" to transform vague requests into precise, structured prompts with goals, constraints, and phased execution.",
-      "path": "skills/architect/SKILL.md"
-    }
-  ]
+  }
 }
