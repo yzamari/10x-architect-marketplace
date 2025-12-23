@@ -1,0 +1,13 @@
+{
+  "name": "10x-architect-benchmarks",
+  "version": "1.0.0",
+  "description": "Benchmark suite for 10x Architect plugin",
+  "main": "run-benchmark.js",
+  "scripts": {
+    "benchmark": "node run-benchmark.js",
+    "generate-report": "node generate-report.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.52.0"
+  }
+}

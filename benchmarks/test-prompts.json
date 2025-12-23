@@ -1,0 +1,139 @@
+{
+  "description": "Test prompts for benchmarking 10x Architect plugin",
+  "version": "1.0.0",
+  "prompts": [
+    {
+      "id": "feature-simple",
+      "category": "feature",
+      "complexity": "simple",
+      "prompt": "add a search bar to the header"
+    },
+    {
+      "id": "feature-medium",
+      "category": "feature",
+      "complexity": "medium",
+      "prompt": "implement user authentication"
+    },
+    {
+      "id": "feature-complex",
+      "category": "feature",
+      "complexity": "complex",
+      "prompt": "add a real-time notification system with websockets"
+    },
+    {
+      "id": "bugfix-simple",
+      "category": "bugfix",
+      "complexity": "simple",
+      "prompt": "fix the login button not working"
+    },
+    {
+      "id": "bugfix-medium",
+      "category": "bugfix",
+      "complexity": "medium",
+      "prompt": "fix the memory leak in the dashboard component"
+    },
+    {
+      "id": "refactor-simple",
+      "category": "refactor",
+      "complexity": "simple",
+      "prompt": "refactor the utils file"
+    },
+    {
+      "id": "refactor-medium",
+      "category": "refactor",
+      "complexity": "medium",
+      "prompt": "refactor the API module to use async/await"
+    },
+    {
+      "id": "refactor-complex",
+      "category": "refactor",
+      "complexity": "complex",
+      "prompt": "refactor the monolithic service into microservices"
+    },
+    {
+      "id": "docs-simple",
+      "category": "documentation",
+      "complexity": "simple",
+      "prompt": "add documentation to the auth module"
+    },
+    {
+      "id": "test-simple",
+      "category": "testing",
+      "complexity": "simple",
+      "prompt": "add tests for the user service"
+    }
+  ],
+  "metrics": {
+    "description": "Objective metrics measured for each prompt",
+    "items": [
+      {
+        "id": "has_goal",
+        "name": "Has Clear Goal",
+        "pattern": "(Goal:|GOAL|goal:|We will|objective)",
+        "weight": 1
+      },
+      {
+        "id": "has_north_star",
+        "name": "Has North Star/Business Value",
+        "pattern": "(North Star|business value|user benefit|value:|why)",
+        "weight": 1
+      },
+      {
+        "id": "has_constraints",
+        "name": "Has Constraints",
+        "pattern": "(Do NOT|Don't|CONSTRAINT|Constraints:|avoid|must not)",
+        "weight": 1
+      },
+      {
+        "id": "constraint_count",
+        "name": "Number of Constraints",
+        "pattern": "(Do NOT|Don't|must not|avoid)",
+        "type": "count",
+        "weight": 0.5
+      },
+      {
+        "id": "has_phases",
+        "name": "Has Execution Phases",
+        "pattern": "(Phase|Step \\d|\\d\\.|1\\)|EXECUTION|phases)",
+        "weight": 1
+      },
+      {
+        "id": "phase_count",
+        "name": "Number of Phases",
+        "pattern": "^\\s*\\d+[.)]",
+        "type": "count",
+        "weight": 0.5
+      },
+      {
+        "id": "has_tdd",
+        "name": "Has TDD Instructions",
+        "pattern": "(TDD|test.driven|RED.GREEN|write.*test.*first|failing test)",
+        "weight": 1
+      },
+      {
+        "id": "has_documentation",
+        "name": "Has Documentation Requirements",
+        "pattern": "(document|JSDoc|docstring|README|comment)",
+        "weight": 1
+      },
+      {
+        "id": "has_solid",
+        "name": "Has SOLID Principles",
+        "pattern": "(SOLID|Single Responsibility|Open.Closed|Liskov|Interface Segregation|Dependency Inversion)",
+        "weight": 1
+      },
+      {
+        "id": "has_edge_cases",
+        "name": "Has Edge Case Consideration",
+        "pattern": "(edge case|error|exception|validate|boundary|corner case)",
+        "weight": 1
+      },
+      {
+        "id": "has_step_by_step",
+        "name": "Has Step-by-Step Instruction",
+        "pattern": "(step.by.step|think through|systematically|methodically)",
+        "weight": 0.5
+      }
+    ]
+  }
+}

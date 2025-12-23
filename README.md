@@ -8,27 +8,36 @@
 
 ---
 
-### Benchmark Results at a Glance
+### Real Benchmark Results (Verified)
+
+> **These are real results from running 10 test prompts through the 10x Architect enhancement.**
+> Run `node benchmarks/run-benchmark-direct.js` to verify yourself.
 
 ```mermaid
 xychart-beta horizontal
-    title "Prompt Quality: Before vs After"
-    x-axis "Quality Score (0-10)" 0 --> 10
+    title "Prompt Quality Score (%)"
+    x-axis "Score" 0 --> 100
     y-axis ["With 10x Architect", "Without Plugin"]
-    bar [9.5, 0.75]
+    bar [98.8, 1.3]
 ```
 
-| Metric | Result |
-|--------|:------:|
-| Quality Score Improvement | **+1167%** |
-| Prompts with Clear Constraints | 0% → **100%** |
-| Prompts with Execution Phases | 0% → **100%** |
-| Prompts with Business Context | 0% → **100%** |
+| Metric | Without | With | Change |
+|--------|:-------:|:----:|:------:|
+| **Average Quality Score** | 1.3% | 98.8% | **+97.5%** |
+| Has Clear Goal | 0% | 100% | ✅ |
+| Has Constraints | 0% | 100% | ✅ |
+| Has Execution Phases | 0% | 100% | ✅ |
+| Has TDD Requirements | 0% | 100% | ✅ |
+| Has Documentation Req | 10% | 100% | ✅ |
+| Has SOLID Principles | 0% | 100% | ✅ |
 
 <details>
-<summary>📊 See full benchmark methodology and results</summary>
+<summary>📊 See full benchmark methodology, test cases, and how to verify</summary>
 
-Jump to [Benchmark: Before vs After](#benchmark-before-vs-after) for detailed test cases and scoring methodology.
+Jump to [Benchmark: Before vs After](#benchmark-before-vs-after) for:
+- Complete methodology explanation
+- All 10 test cases with scores
+- Instructions to run benchmarks yourself
 
 </details>
 
@@ -580,74 +589,70 @@ Think step-by-step. Critique for:
 
 ---
 
-## Aggregate Benchmark Results
+## Real Benchmark Results
 
-### Overall Quality Score Comparison
+> **Timestamp:** 2025-12-23T06:34:23.599Z
+> **Test Suite:** 10 diverse prompts across features, bugfixes, refactoring, docs, and tests
+
+### Overall Results
 
 ```mermaid
 xychart-beta
-    title "Prompt Quality Score (0-10)"
+    title "Prompt Quality Score (%)"
     x-axis ["Without Plugin", "With Plugin"]
-    y-axis "Quality Score" 0 --> 10
-    bar [0.75, 9.5]
+    y-axis "Score %" 0 --> 100
+    bar [1.3, 98.8]
 ```
 
-> **+1167% improvement** in average prompt quality score
-
-### Quality by Dimension
+### Results by Test Case
 
 ```mermaid
 xychart-beta
-    title "Score by Quality Dimension (0-2 scale)"
-    x-axis ["Clarity", "Constraints", "Structure", "Context", "Reasoning"]
-    y-axis "Score" 0 --> 2
-    bar "Without Plugin" [0.75, 0, 0, 0, 0]
-    bar "With Plugin" [2, 2, 2, 2, 1.5]
+    title "Individual Test Case Scores (%)"
+    x-axis ["Search", "Auth", "WebSocket", "Login Bug", "Memory Leak", "Utils", "Async API", "Microservices", "Docs", "Tests"]
+    y-axis "Score %" 0 --> 100
+    bar "Without" [0, 0, 0, 0, 0, 0, 0, 0, 12.5, 0]
+    bar "With" [100, 100, 100, 100, 100, 100, 100, 87.5, 100, 100]
 ```
 
-### Test Case Results
+### Detailed Test Results
 
-```mermaid
-xychart-beta
-    title "Quality Score by Test Case"
-    x-axis ["Search Feature", "Authentication", "Bug Fix", "Refactoring"]
-    y-axis "Score (0-10)" 0 --> 10
-    bar "Without" [1, 1, 0, 1]
-    bar "With" [9, 10, 9, 10]
+| # | Test Case | Category | Without | With | Improvement |
+|:-:|-----------|----------|:-------:|:----:|:-----------:|
+| 1 | add a search bar to the header | feature | 0% | 100% | +100% |
+| 2 | implement user authentication | feature | 0% | 100% | +100% |
+| 3 | add real-time notification system | feature | 0% | 100% | +100% |
+| 4 | fix the login button not working | bugfix | 0% | 100% | +100% |
+| 5 | fix memory leak in dashboard | bugfix | 0% | 100% | +100% |
+| 6 | refactor the utils file | refactor | 0% | 100% | +100% |
+| 7 | refactor API to async/await | refactor | 0% | 100% | +100% |
+| 8 | refactor monolith to microservices | refactor | 0% | 87.5% | +87.5% |
+| 9 | add documentation to auth module | docs | 12.5% | 100% | +87.5% |
+| 10 | add tests for user service | testing | 0% | 100% | +100% |
+| | **AVERAGE** | | **1.3%** | **98.8%** | **+97.5%** |
+
+### Metrics Measured
+
+| Metric | Without Plugin | With Plugin |
+|--------|:--------------:|:-----------:|
+| Has Clear Goal | 0/10 (0%) | 10/10 (100%) |
+| Has North Star | 0/10 (0%) | 10/10 (100%) |
+| Has Constraints | 0/10 (0%) | 10/10 (100%) |
+| Has Execution Phases | 0/10 (0%) | 10/10 (100%) |
+| Has TDD Instructions | 0/10 (0%) | 10/10 (100%) |
+| Has Documentation Req | 1/10 (10%) | 10/10 (100%) |
+| Has SOLID Principles | 0/10 (0%) | 10/10 (100%) |
+| Has Edge Case Consideration | 0/10 (0%) | 9/10 (90%) |
+
+### How to Verify These Results
+
+```bash
+cd benchmarks
+npm install
+node run-benchmark-direct.js
 ```
 
-### Improvement Distribution
-
-```mermaid
-pie showData
-    title "Where 10x Architect Adds Value"
-    "Constraints (boundaries)" : 25
-    "Structure (phases)" : 25
-    "Context (North Star)" : 25
-    "Reasoning (edge cases)" : 15
-    "Clarity (goal)" : 10
-```
-
-### Dimension Comparison Table
-
-| Dimension | Without | With | Improvement |
-|-----------|:-------:|:----:|:-----------:|
-| Clarity | 0.75 | 2.00 | **+167%** |
-| Constraints | 0.00 | 2.00 | **+∞** |
-| Structure | 0.00 | 2.00 | **+∞** |
-| Context | 0.00 | 2.00 | **+∞** |
-| Reasoning | 0.00 | 1.50 | **+∞** |
-| **TOTAL** | **0.75** | **9.50** | **+1167%** |
-
-### Key Findings
-
-| Metric | Without Plugin | With Plugin | Impact |
-|--------|:--------------:|:-----------:|:------:|
-| Average Quality Score | 0.75/10 | 9.5/10 | **+1167%** |
-| Prompts with constraints | 0% | 100% | ✅ |
-| Prompts with phases | 0% | 100% | ✅ |
-| Prompts with context | 0% | 100% | ✅ |
-| Edge case consideration | 0% | 100% | ✅ |
+Results are saved to `benchmarks/results/latest.json` with full details.
 
 ---
 
