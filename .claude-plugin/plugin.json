@@ -1,7 +1,7 @@
 {
   "name": "10x-architect",
   "description": "Auto-enhance prompts using the 10 Principles of Claude Code Design. Transform vague requests into precise, structured prompts with TDD, documentation, and SOLID principles.",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "author": {
     "name": "Yahav Zamari",
     "email": "yahavzamari@gmail.com"
@@ -10,5 +10,5 @@
   "repository": "https://github.com/yzamari/10x-architect",
   "license": "MIT",
   "keywords": ["prompt-engineering", "10x", "architect", "enhancement", "productivity", "best-practices", "tdd", "solid", "oop"],
-  "hooks": "./hooks/hooks.json"
+  "hooks": "../hooks/hooks.json"
 }
