@@ -9,7 +9,7 @@ Transform any request into an optimized prompt using the **10 Rules for Claude C
 
 ## Visual Feedback
 
-- **Lean Mode (default, v2.4.1+)** — Claude's first reply in the session starts with `✨ 10x Lean active` so you can see the plugin loaded. Set `"showAck": false` in `.claude/architect-config.json` for truly silent mode.
+- **Lean Mode (default, v2.5.0+)** — Claude's first reply in the session starts with `✨ 10x Lean active` so you can see the plugin loaded. Set `"showAck": false` in `.claude/architect-config.json` for truly silent mode.
 - **Classic Mode (`"lean": false`)** — you still see the v2.2.1-era banner:
 
 ```
@@ -233,22 +233,26 @@ class OrderService {
 
 ## Config
 
-`.claude/architect-config.json`:
+`.claude/architect-config.json` (auto-written on first session):
 ```json
 {
   "mode": "C",
   "autoDetect": true,
   "autoApproveTimeout": 5,
-  "enforceTDD": true,
-  "enforceDocumentation": true,
-  "enforceSOLID": true,
-  "lean": true
+  "lean": true,
+  "showAck": true
 }
 ```
 
 | Option | Default | Effect |
 |--------|:-------:|--------|
-| `lean` | `true` (v2.4.0+) | When `true`, both the SessionStart hook and `/architect` output use Lean Mode (compact XML, ~55–70% fewer tokens, session-wide terse-response hint). Quality signals retained. Set to `false` for v2.2.1 verbose behavior. See `benchmarks/run-token-benchmark.js`. |
+| `mode` | `"C"` | `A` = silent, `B` = show + run, `C` = show + wait 5 s (default) |
+| `autoDetect` | `true` | Scan project for tech stack context |
+| `autoApproveTimeout` | `5` | Seconds before auto-execute in mode C |
+| `lean` | `true` | Compact XML output (~55–70% fewer tokens, 100% signal retention). Set `false` for v2.2.1 verbose behavior. |
+| `showAck` | `true` | First reply begins with `✨ 10x Lean active`. Set `false` for silent mode. |
+
+> **Cursor users:** config does not apply — the `.cursor/rules/10x-architect.mdc` rule is always Lean. See the repo's `cursor/` directory.
 
 ## Example
 

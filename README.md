@@ -42,7 +42,8 @@ Jump to [Benchmarks](#benchmarks) for:
 - What we measure (and what we don't)
 - Prompt structure benchmarks
 - Output quality benchmarks
-- **Lean Mode token benchmark** (new in v2.3.0)
+- **Lean Mode token benchmark** (v2.3.0+)
+- **Cursor rule token + quality benchmark** (v2.5.0+)
 - How to verify yourself
 
 </details>
@@ -51,7 +52,7 @@ Jump to [Benchmarks](#benchmarks) for:
 
 ## What is 10x Architect?
 
-10x Architect is a Claude Code plugin that automatically enhances your prompts before they're processed. It applies proven prompt engineering principles to transform quick, casual requests into structured, goal-oriented instructions that yield better results.
+10x Architect is a prompt-engineering plugin for **Claude Code** and **Cursor** that automatically enhances your prompts before they're processed. It applies proven prompt engineering principles to transform quick, casual requests into structured, goal-oriented instructions that yield better results.
 
 ### The Problem
 
@@ -148,7 +149,7 @@ In Lean mode the injected context is a compact XML block naming the 6 principles
 
 ---
 
-## Installation
+## Claude Code Installation
 
 ```bash
 # 1. Add the marketplace (one-time)
@@ -1169,16 +1170,16 @@ The difference should be immediately visible in:
 A: Negligibly. The hook adds ~100ms of processing before prompt submission.
 
 **Q: Can I customize the rules?**
-A: Currently the 10 rules are fixed. Custom rules are planned for v2.
+A: The 10 principles are fixed by design — they're the scoring anchors for the benchmarks. To add project-specific guidance, put it in your project's `CLAUDE.md` (Claude Code) or add a second `.cursor/rules/*.mdc` file (Cursor) alongside the 10x rule.
 
 **Q: Does it work with all prompts?**
 A: It's optimized for development tasks. Simple questions pass through with minimal changes.
 
-**Q: How is this different from system prompts?**
-A: System prompts are static. 10x Architect dynamically adapts to each request.
+**Q: How is this different from a system prompt?**
+A: In Claude Code, the SessionStart hook injects the principles once per session and the `/architect` command generates a task-specific structured breakdown on demand — so guidance adapts to each task. In Cursor, the `.mdc` rule is always-on (like a system prompt), but typing `architect: [task]` in chat triggers a full per-task breakdown from the AI.
 
 **Q: How much does the plugin itself cost in tokens?**
-A: Default (Lean + ack, v2.4.1+): ~122 tokens per session (SessionStart hook) + ~194 per `/architect` invocation. Silent Lean (`"showAck": false`): ~104 + ~194. Opt-out (Classic, `"lean": false`): ~319 + ~414, matching v2.2.1. See [Lean Mode](#lean-mode-default-since-v240).
+A: **Claude Code** — default (Lean + ack): ~122 tokens/session + ~194 per `/architect` call. Silent Lean (`"showAck": false`): ~104 + ~194. Classic (`"lean": false`): ~319 + ~414. **Cursor** — always-apply rule body: ~290 tokens/session. See [Lean Mode](#lean-mode-default-since-v240) and [Cursor benchmark](#cursor-benchmark-results).
 
 **Q: How do I know the plugin is actually running?**
 A: Claude's first reply in each new session starts with `✨ 10x Lean active` (in Lean Mode, default) or `✨ 10x Architect Active` (in Classic). That's the `<ack>` hint firing. The config file `.claude/architect-config.json` is also written to your project on first session — check it with `cat .claude/architect-config.json`. See [How to verify it's working](#how-to-verify-its-working) for a full checklist.
