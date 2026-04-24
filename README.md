@@ -95,72 +95,102 @@ Think step-by-step. Critique for security edge cases.
 
 ## How It Works
 
+The plugin runs **once per Claude Code session** via a `SessionStart` hook (since v2.1). On first session after install it also writes a default config file (since v2.4). There's no per-prompt processing, no network call, no latency.
+
 ```mermaid
 flowchart LR
-    A[Your Prompt] --> B{10x Architect Hook}
-    B --> C[Apply 10 Rules]
-    C --> D[Add Goal & North Star]
-    C --> E[Add Constraints]
-    C --> F[Add Execution Phases]
-    D --> G[Enhanced Context]
-    E --> G
+    A[claude session starts] --> B{config file exists?}
+    B -- no --> C[write .claude/architect-config.json<br/>with lean:true defaults]
+    C --> D
+    B -- yes --> D{lean == true?}
+    D -- yes / default --> E[inject Lean payload<br/>~104 tokens]
+    D -- false --> F[inject Classic payload<br/>~319 tokens]
+    E --> G[Claude sees principles for<br/>every turn this session]
     F --> G
-    G --> H[Claude Processes]
-    H --> I[Better Output]
 
-    style A fill:#e1f5fe
-    style G fill:#c8e6c9
-    style I fill:#fff9c4
+    style C fill:#e1f5fe
+    style E fill:#c8e6c9
+    style F fill:#fff3e0
+    style G fill:#fff9c4
 ```
 
-### The Enhancement Pipeline
+### Per-session timeline
 
 ```mermaid
 sequenceDiagram
     participant U as User
-    participant H as 10x Architect Hook
-    participant C as Claude Code
+    participant CC as Claude Code
+    participant H as SessionStart hook
+    participant FS as .claude/
+    participant M as Model
 
-    U->>H: "add dark mode"
-    H->>H: Analyze prompt
-    H->>H: Detect project context
-    H->>H: Apply 10 Rules
-    H->>C: Original prompt + Architectural guidance
-    C->>C: Process with enhanced context
-    C->>U: Structured, focused implementation
+    U->>CC: open session
+    CC->>H: fire hook (once)
+    H->>FS: read architect-config.json
+    alt first run
+        FS-->>H: not found
+        H->>FS: write defaults {lean:true, ...}
+    else existing
+        FS-->>H: {lean:true|false}
+    end
+    H-->>CC: additionalContext (Lean or Classic)
+    loop each turn
+        U->>M: user prompt
+        M->>M: generates reply using<br/>injected principles
+        M-->>U: structured answer
+    end
 ```
+
+In Lean mode the injected context is a compact XML block naming the 6 principles (goal, constraints, phases, TDD, docs, SOLID) plus a `<response-style>` hint that keeps Claude's replies terse. In Classic mode the same principles are spelled out in full markdown. Either way the context is loaded **once** and cached by Claude for the whole session.
 
 ---
 
 ## Installation
 
 ```bash
-# Step 1: Add the marketplace
+# 1. Add the marketplace (one-time)
 /plugin marketplace add yzamari/10x-architect-marketplace
 
-# Step 2: Install the plugin
+# 2. Install the plugin
 /plugin install 10x-architect@10x-architect-marketplace
 ```
 
-That's it! The plugin now automatically enhances all your prompts.
+That's it. On your next Claude Code session the plugin:
+
+1. Writes `.claude/architect-config.json` with sensible defaults (`lean:true`, mode `C`).
+2. Injects the Lean context (~104 tokens) so Claude follows the 10x principles for the whole session.
+3. Stays out of your way. No banner, no acknowledgment step, no per-prompt latency.
+
+---
+
+## Quickstart
+
+```
+# You                              # What happens
+─────────────────────────────────  ──────────────────────────────────
+1. Install plugin (above).
+2. Start a new Claude Code         SessionStart hook fires once.
+   session in any project.         Writes .claude/architect-config.json
+                                   with lean:true.
+3. Type a task, e.g.               Claude already has the 6 principles
+   "add JWT auth"                  in context. Replies with goal,
+                                   constraints, phased plan, TDD cycle,
+                                   docs, SOLID — and stays terse.
+4. Want full verbose output?       Edit .claude/architect-config.json,
+                                   set "lean": false. Reopen session.
+5. Want richer control for a       /architect [task]  or
+   single task?                    /architect --lean [task]
+```
+
+No `.claude/architect-config.json` needs to exist beforehand — the hook creates it. Nothing else ever needs to be installed or configured.
 
 ---
 
 ## Visual Feedback
 
-When the plugin enhances your prompt, you'll see real-time feedback:
+> In **Lean Mode (default)** the plugin is quiet — no banner, no acknowledgment line. Evidence that it's active: Claude's replies start following goals/constraints/phases/TDD/SOLID and stay terse.
 
-```
-✨ 10x Architect Enhanced
-├─ Goal: Add JWT-based user authentication
-├─ Constraints: 3 boundaries set
-├─ Phases: 5 execution steps
-├─ TDD: Tests required first
-├─ Docs: Documentation enforced
-└─ SOLID: OOP principles applied
-```
-
-The full architectural guidance is then injected into the context:
+In **Classic Mode** (opt-out via `"lean": false`) you see the v2.2.1-era banner and the full ~300-word guidance block:
 
 ```
 ┌────────────────────────────────────────────────┐
@@ -234,7 +264,7 @@ Based on [Greg Isenberg's "10 Rules for Claude Code"](https://www.youtube.com/wa
 
 ---
 
-## Mandatory Engineering Principles (v1.3.0+)
+## Mandatory Engineering Principles
 
 In addition to the 10 Rules, every prompt is enhanced with these **mandatory engineering principles**:
 
@@ -893,7 +923,7 @@ architect --mode=B add user settings page
 architect --mode=C refactor database layer
 ```
 
-> **Note:** As of v1.3.0, the plugin automatically enhances all prompts via a hook with visual feedback, TDD enforcement, documentation requirements, and SOLID principles. The `architect` command is optional for explicit control.
+> **Note (v2.4.0):** The plugin runs automatically via a SessionStart hook — you don't need to invoke `architect` for the principles to apply. Use the `architect` command when you want an explicit, visible breakdown for a specific task, or to force Lean/Classic per-invocation with `--lean`.
 
 ---
 

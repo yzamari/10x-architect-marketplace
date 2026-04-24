@@ -7,9 +7,10 @@ description: Auto-enhance prompts using Greg Isenberg's 10 Rules for Claude Code
 
 Transform any request into an optimized prompt using the **10 Rules for Claude Code** plus **mandatory engineering principles**.
 
-## Visual Feedback (v1.3.0+)
+## Visual Feedback
 
-When the plugin enhances your prompt, you'll see:
+- **Lean Mode (default, v2.4.0+)** — the plugin is quiet. No banner, no acknowledgment. Evidence it's active: Claude's replies start following the principles and stay terse.
+- **Classic Mode (`"lean": false`)** — you still see the v2.2.1-era banner:
 
 ```
 ✨ 10x Architect Enhanced
@@ -21,7 +22,7 @@ When the plugin enhances your prompt, you'll see:
 └─ SOLID: OOP principles applied
 ```
 
-This confirms the enhancement was applied and shows what was added.
+- **Explicit `/architect [task]`** — the skill prints the structured breakdown (Lean XML tags or Classic blocks, depending on config) so you can edit before Claude executes (modes B/C).
 
 ## Usage
 
@@ -37,16 +38,14 @@ architect --lean [task]     # Force Lean Mode for this invocation
 
 ### 1. Check Config
 
-Read `.claude/architect-config.json` if exists. If not, ask user for preferred mode (A/B/C) and create config.
+Read `.claude/architect-config.json`. As of v2.4.0 this file is written automatically by the SessionStart hook on first run — it will normally exist. If it doesn't (e.g. user deleted it), the plugin still works with built-in defaults (Lean on, mode C).
 
-Config field `lean` (boolean, default **`true`** as of v2.4.0) selects the output profile:
+Config field `lean` (boolean, **default `true`** as of v2.4.0) selects the output profile:
 
 - `"lean": true`  → **Lean Mode** output (section 4b below, **default**): compact XML, ~55–70% fewer tokens, same quality signals (goal, north-star, Do NOT, phases, TDD, RED-GREEN-REFACTOR, JSDoc, README, SOLID). Also emits `<response-style>` so Claude's replies stay terse.
 - `"lean": false` → Classic output (section 4a below): verbose, decorated, human-readable (v2.2.1 behavior, opt-out).
 
-If no config file exists, the SessionStart hook **auto-writes** `.claude/architect-config.json` on first run with Lean as default, so the user has a discoverable file to edit later.
-
-A CLI flag `--lean` on a single invocation forces Lean Mode for just that call, regardless of config.
+CLI flag `--lean` on a single invocation forces Lean Mode for that call regardless of config. There is no `--classic` flag — set `"lean": false` in the config if you want Classic as your session default.
 
 ### 2. Parse Request
 
@@ -255,7 +254,21 @@ class OrderService {
 
 **Input:** `architect add search to the header`
 
-**Output:**
+### Lean Mode output (default since v2.4.0)
+
+```xml
+<goal>Add a search bar to the header component; North Star: enable users to find content quickly</goal>
+<constraints>Do NOT implement backend search yet; Do NOT modify existing header layout; Do NOT add new dependencies</constraints>
+<phases>1.test-SearchBar 2.impl-SearchBar 3.test-Header 4.integrate 5.docs</phases>
+<tdd>TDD RED-GREEN-REFACTOR; cover edge cases + errors</tdd>
+<docs>JSDoc @param/@returns; README if user-facing</docs>
+<solid>SOLID: SRP·OCP·LSP·ISP·DIP</solid>
+<response-style>terse; preserve code/commands/paths verbatim; no filler</response-style>
+<think>step-by-step; critique edge cases</think>
+```
+
+### Classic Mode output (`"lean": false`, v2.2.1 behavior)
+
 ```
 ┌────────────────────────────────────────────────┐
 │ 10x ARCHITECT GUIDANCE                         │
@@ -307,3 +320,5 @@ Critique your implementation for:
 - Performance (debounce input)
 - Mobile responsiveness
 ```
+
+Classic output is ~10× longer for the same semantic content — that's the token saving Lean Mode buys, at 100% structure-score retention on the benchmark rubric.
