@@ -39,10 +39,12 @@ architect --lean [task]     # Force Lean Mode for this invocation
 
 Read `.claude/architect-config.json` if exists. If not, ask user for preferred mode (A/B/C) and create config.
 
-Config field `lean` (boolean, default `false`) selects the output profile:
+Config field `lean` (boolean, default **`true`** as of v2.4.0) selects the output profile:
 
-- `"lean": false` → Classic output (section 4a below): verbose, decorated, human-readable.
-- `"lean": true`  → **Lean Mode** output (section 4b below): compact XML, ~55–70% fewer tokens, same quality signals (goal, north-star, Do NOT, phases, TDD, RED-GREEN-REFACTOR, JSDoc, README, SOLID).
+- `"lean": true`  → **Lean Mode** output (section 4b below, **default**): compact XML, ~55–70% fewer tokens, same quality signals (goal, north-star, Do NOT, phases, TDD, RED-GREEN-REFACTOR, JSDoc, README, SOLID). Also emits `<response-style>` so Claude's replies stay terse.
+- `"lean": false` → Classic output (section 4a below): verbose, decorated, human-readable (v2.2.1 behavior, opt-out).
+
+If no config file exists, the SessionStart hook **auto-writes** `.claude/architect-config.json` on first run with Lean as default, so the user has a discoverable file to edit later.
 
 A CLI flag `--lean` on a single invocation forces Lean Mode for just that call, regardless of config.
 
@@ -115,6 +117,7 @@ Compact XML that retains every quality signal the benchmark measures while cutti
 <tdd>TDD RED-GREEN-REFACTOR; every fn has test; cover edge cases + errors</tdd>
 <docs>JSDoc @param/@returns; README if user-facing; comment complex logic</docs>
 <solid>SOLID: SRP · OCP · LSP · ISP · DIP applied (Single Responsibility, Open/Closed, Liskov, Interface Segregation, Dependency Inversion)</solid>
+<response-style>terse; preserve code/commands/paths verbatim; skip filler prose</response-style>
 <think>step-by-step; list edge cases; critique for boundary conditions</think>
 ```
 
@@ -240,13 +243,13 @@ class OrderService {
   "enforceTDD": true,
   "enforceDocumentation": true,
   "enforceSOLID": true,
-  "lean": false
+  "lean": true
 }
 ```
 
 | Option | Default | Effect |
 |--------|:-------:|--------|
-| `lean` | `false` | When `true`, both the SessionStart hook and `/architect` output use Lean Mode (compact XML, ~55–70% fewer tokens). Quality signals retained. See `benchmarks/run-token-benchmark.js` for numbers. |
+| `lean` | `true` (v2.4.0+) | When `true`, both the SessionStart hook and `/architect` output use Lean Mode (compact XML, ~55–70% fewer tokens, session-wide terse-response hint). Quality signals retained. Set to `false` for v2.2.1 verbose behavior. See `benchmarks/run-token-benchmark.js`. |
 
 ## Example
 

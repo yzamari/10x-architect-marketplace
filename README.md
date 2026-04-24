@@ -3,9 +3,10 @@
 > Transform vague prompts into precise, well-structured instructions using Greg Isenberg's "10 Rules for Claude Code"
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-2.3.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-2.4.0-blue.svg)]()
 [![Claude Code Plugin](https://img.shields.io/badge/Claude%20Code-Plugin-purple.svg)]()
-[![Lean Mode](https://img.shields.io/badge/Lean%20Mode-%E2%88%9263%25%20tokens-brightgreen.svg)]()
+[![Lean Mode](https://img.shields.io/badge/Lean%20Mode-default-brightgreen.svg)]()
+[![First-turn tax](https://img.shields.io/badge/first--turn%20tax-%E2%88%9259%25%20tokens-brightgreen.svg)]()
 
 ---
 
@@ -29,7 +30,7 @@ flowchart LR
 | No TDD mention | RED-GREEN-REFACTOR workflow |
 | No architecture | SOLID principles applied |
 
-> 🪶 **New in v2.3.0 — [Lean Mode](#lean-mode-v230):** opt-in compact XML output that cuts **63.2% of tokens** (733 → 270 per first turn) while keeping 100% of the quality signals. See the [Lean Mode benchmark](#lean-mode-v230) below.
+> 🪶 **New in v2.4.0 — [Lean Mode is now the default](#lean-mode-default-since-v240):** zero-config, auto-bootstrapped on first session. Cuts **59.3% of first-turn tokens** (733 → 298) while keeping 100% of the quality signals, and now also carries a session-wide `<response-style>` hint that tightens Claude's replies. Set `"lean": false` in `.claude/architect-config.json` to restore v2.2.1 verbose behavior.
 
 <details>
 <summary>📊 See benchmarks and methodology (with honest disclaimers)</summary>
@@ -722,8 +723,12 @@ node analyze-samples.js
 # Benchmark 3: Live output test (requires API key)
 ANTHROPIC_API_KEY=your-key node run-output-benchmark.js
 
+
 # Benchmark 4: Lean Mode token savings (offline, no API key)  — v2.3.0+
 node run-token-benchmark.js
+
+# Benchmark 5: Response-compression lower bound (offline, no API key) — v2.4.0+
+node run-response-compression-benchmark.js
 ```
 
 Results saved to `benchmarks/results/`
@@ -732,56 +737,48 @@ Results saved to `benchmarks/results/`
 
 ---
 
-## Lean Mode (v2.3.0+)
+## Lean Mode (default since v2.4.0)
 
-> **TL;DR** — opt-in compact XML output. Saves **63.2% tokens** on the first turn, **58.4% average** on `/architect` enhancements, with **100% retention** of the 9 quality signals the benchmark scores.
+> **TL;DR** — zero-config. Install the plugin and Lean Mode is on. Cuts **59.3% of first-turn tokens** (733 → 298), **53.1% of `/architect` output**, **67.4% of the SessionStart hook**, with **100% retention** of the 9 quality signals the benchmark scores. Adds a session-wide `<response-style>` hint that's measured to save another **~20%** of output tokens on filler-heavy replies (simulated lower bound — live API savings typically higher).
 
 ### Why
 
-The plugin is itself a "token tax" — the SessionStart hook injects ~319 tokens **every session** just to load the 6 principles, and each `/architect` enhancement adds ~414 more. Over a day of Claude Code use, that's real money on the input side of the bill and real space in the cache-cold prefix. Lean Mode compresses both payloads into a compact XML structure that preserves every keyword the benchmark scores (`goal`, `North Star`, `Do NOT`, `phases`, `TDD`, `RED-GREEN-REFACTOR`, `JSDoc`, `README`, `SOLID`, `edge case`, `step-by-step`), so Claude's guidance quality stays intact while the payload shrinks by more than half.
+The plugin is itself a "token tax" — the SessionStart hook injects ~319 tokens **every session** just to load the 6 principles, and each `/architect` enhancement adds ~414 more. Over a day of Claude Code use that's real money on the input side of the bill and real space in the cache-cold prefix. Lean Mode compresses both payloads into a compact XML structure that preserves every keyword the benchmark scores (`goal`, `North Star`, `Do NOT`, `phases`, `TDD`, `RED-GREEN-REFACTOR`, `JSDoc`, `README`, `SOLID`, `edge case`, `step-by-step`), plus it carries a `<response-style>` tag that nudges Claude to skip filler in its replies.
 
-### How to turn it on
+### Activation
 
-Add `"lean": true` to `.claude/architect-config.json`:
+**You don't do anything.** On first session, the SessionStart hook:
+1. Checks for `.claude/architect-config.json`.
+2. If missing, writes one with sensible defaults (`lean: true`, mode `C`, autoDetect on).
+3. Emits the Lean context payload.
 
-```json
-{
-  "mode": "C",
-  "autoDetect": true,
-  "autoApproveTimeout": 5,
-  "lean": true
-}
-```
-
-Default is `false`. No existing v2.2.1 user is affected until they opt in.
+To opt out to v2.2.1 verbose behavior, set `"lean": false` in that file. Existing v2.3.0+ users who already have `lean: false` are respected — the bootstrap only runs when the file is missing.
 
 ### What it looks like
 
-**Classic SessionStart hook (default, ~319 tokens):**
+**Classic SessionStart hook (opt-out, ~319 tokens):**
 ```
 ## 1. GOAL CLARITY
 - Identify the clear goal and business value before starting
 - State the 'North Star' - what success looks like
 
 ## 2. CONSTRAINTS
-- Define what NOT to do (at least 2-3 boundaries)
 ...6 sections, verbose markdown, 1.25 KB...
 ```
 
-**Lean SessionStart hook (~98 tokens, -69.3%):**
+**Lean SessionStart hook (default, ~104 tokens, -67.4%):**
 ```
-<10x-architect mode="lean">
+<10x-architect>
 <principles>
 GOAL+North Star; Do NOT ≥2; 3-6 phases;
 TDD RED-GREEN-REFACTOR; JSDoc+README; SOLID(SRP/OCP/LSP/ISP/DIP).
 </principles>
-<ack>Start first reply with "✨ 10x Lean"</ack>
+<response-style>terse by default; preserve code/commands/paths verbatim; skip filler prose</response-style>
 <invoke>/architect [task] for full guidance</invoke>
 </10x-architect>
 ```
 
-**Classic `/architect` output** → 8 verbose sections, ~414 tokens avg.
-**Lean `/architect` output** → 7 compact XML tags, ~172 tokens avg (-58.4%):
+**Lean `/architect` output** — 8 compact XML tags, ~194 tokens avg (-53.1% vs classic ~414):
 
 ```xml
 <goal>{task}; North Star: {business value}</goal>
@@ -790,20 +787,21 @@ TDD RED-GREEN-REFACTOR; JSDoc+README; SOLID(SRP/OCP/LSP/ISP/DIP).
 <tdd>TDD RED-GREEN-REFACTOR; cover edge cases + errors</tdd>
 <docs>JSDoc @param/@returns; README if user-facing</docs>
 <solid>SOLID: SRP·OCP·LSP·ISP·DIP</solid>
+<response-style>terse; preserve code/commands/paths verbatim; no filler</response-style>
 <think>step-by-step; critique edge cases</think>
 ```
 
-### Measured results
+### Measured results (input-side)
 
-Run `node benchmarks/run-token-benchmark.js` locally to reproduce. Full per-prompt numbers are in `benchmarks/results/token-benchmark-latest.json`.
+Run `node benchmarks/run-token-benchmark.js` locally to reproduce. Full per-prompt numbers in `benchmarks/results/token-benchmark-latest.json`.
 
 | Surface | Classic | Lean | Savings |
 |---------|:-------:|:----:|:-------:|
-| SessionStart hook (once / session) | 319 tok | 98 tok | **−69.3%** |
-| `/architect` enhancement (avg of 10 test prompts) | 414 tok | 172 tok | **−58.4%** |
-| Combined first-turn tax | 733 tok | 270 tok | **−63.2%** |
+| SessionStart hook (once / session) | 319 tok | 104 tok | **−67.4%** |
+| `/architect` enhancement (avg of 10 test prompts) | 414 tok | 194 tok | **−53.1%** |
+| Combined first-turn tax | 733 tok | 298 tok | **−59.3%** |
 
-Per-prompt structure-score retention (same 9-pattern rubric used by `run-benchmark-direct.js`):
+Structure-score retention on the 9-pattern rubric used by `run-benchmark-direct.js`:
 
 | # | Prompt | Classic% | Lean% | Retention |
 |:-:|--------|:-------:|:-----:|:---------:|
@@ -819,17 +817,29 @@ Per-prompt structure-score retention (same 9-pattern rubric used by `run-benchma
 | 10 | add tests for the user service | 100% | 100% | 100% |
 | **Avg** | | **98.9%** | **100%** | **101.1%** |
 
-Average retention > 100% because one classic output happened to omit `edge case` / `step-by-step` keywords — Lean Mode's fixed template always includes them.
+Retention > 100% because one classic output happened to omit `edge case` / `step-by-step` — the Lean template always emits them.
 
-### How the benchmark measures tokens
+### Measured results (output-side, new in v2.4.0)
 
-Offline, no API key. Uses `gpt-tokenizer` (cl100k_base BPE) as an offline proxy. Absolute numbers are within ~5% of true Claude tokens; what matters here is the **ratio** between classic and lean, which is stable regardless of tokenizer. Run with `node run-token-benchmark.js` — exits non-zero if savings < 50% or retention < 95%, so you can use it in CI.
+The Lean hook carries `<response-style>terse; preserve code/commands/paths verbatim; no filler</response-style>`, which is a session-wide signal for Claude to skip rhetorical padding. Actual API-side savings require a live run (see `run-output-benchmark.js` with an API key). Offline, `run-response-compression-benchmark.js` reports a **rule-based lower bound** — it strips common filler phrases from stored samples using a conservative transformer that never touches code blocks, inline code, or URLs.
+
+| Input profile | Orig tok | Terse tok | Savings |
+|---------------|:--------:|:---------:|:-------:|
+| Synthetic filler-heavy (mirrors default-verbose Claude) | 561 | 446 | **−20.5%** |
+| Stored natural responses (`without` field) | 720 | 713 | −1.0% |
+| Stored 10x-enhanced responses (`with` field) | 2716 | 2712 | −0.1% |
+
+The last two rows near 0% are **by design** — they confirm the transformer doesn't false-positive on already-dense text. The 20.5% row is the expected floor for the `<response-style>` hint when Claude would otherwise produce natural prose openings. Community caveman-style tools report ~65% on prose-heavy; your mileage depends on Claude's compliance with the hint.
+
+### How the benchmarks measure tokens
+
+Offline, no API key. Uses `gpt-tokenizer` (cl100k_base BPE) as an offline proxy. Absolute numbers are within ~5% of true Claude tokens; what matters here is the **ratio**, which is stable regardless of tokenizer. `run-token-benchmark.js` exits non-zero if savings < 50% or retention < 95% or hook savings < 60% — safe to gate CI.
 
 ### What Lean Mode does NOT do
 
-- Does not change Claude's model behavior. Output quality is the user's responsibility to validate per-task (same as Classic).
-- Does not use prompt caching. Our 319-token hook is below Anthropic's 2,048-token ephemeral-cache minimum; compression is the only lever available.
-- Does not compress Claude's *responses*. That's a separate technique (see `juliusbrussee/caveman` for inspiration) and may land as a future v2.4 option.
+- Does not change Claude's model behavior. Output quality is the user's responsibility to validate per-task.
+- Does not use prompt caching. Our 104-token hook is below Anthropic's 2,048-token ephemeral-cache minimum; compression is the only lever available at this size.
+- The `<response-style>` hint is a **suggestion** to Claude, not a hard constraint. Live savings depend on model compliance — measure with `run-output-benchmark.js` if it matters for your workflow.
 
 ### Pairing tip
 
@@ -889,14 +899,14 @@ architect --mode=C refactor database layer
 
 ## Configuration
 
-Create `.claude/architect-config.json` in your project:
+**v2.4.0+**: you don't need to create this file. The SessionStart hook writes it on first run with sensible defaults:
 
 ```json
 {
   "mode": "C",
   "autoDetect": true,
   "autoApproveTimeout": 5,
-  "lean": false
+  "lean": true
 }
 ```
 
@@ -905,7 +915,7 @@ Create `.claude/architect-config.json` in your project:
 | `mode` | `A\|B\|C` | `C` | Execution mode |
 | `autoDetect` | `boolean` | `true` | Scan for project tech stack |
 | `autoApproveTimeout` | `number` | `5` | Seconds before auto-execute in mode C |
-| `lean` | `boolean` | `false` | **v2.3.0+** — compact XML output, ~63% token savings, 100% signal retention. See [Lean Mode](#lean-mode-v230). |
+| `lean` | `boolean` | `true` | **v2.4.0+ default** — compact XML + response-style hint, ~59% first-turn token savings, 100% signal retention. Set `false` to restore v2.2.1 verbose behavior. See [Lean Mode](#lean-mode-default-since-v240). |
 
 ---
 
@@ -927,15 +937,18 @@ Create `.claude/architect-config.json` in your project:
 │   ├── run-benchmark.js            # Live API structure benchmark (needs key)
 │   ├── run-benchmark-direct.js     # Offline structure benchmark
 │   ├── run-output-benchmark.js     # Live API output-quality benchmark
-│   ├── run-token-benchmark.js      # Lean Mode token savings (offline) — v2.3.0+
+│   ├── run-token-benchmark.js      # Lean Mode input-side token savings (offline)   — v2.3.0+
+│   ├── run-response-compression-benchmark.js  # Response-compression floor (offline) — v2.4.0+
 │   ├── analyze-samples.js          # Analyze saved Claude outputs
 │   ├── lean-templater.js           # Deterministic classic→lean transformer
+│   ├── response-compressor.js      # Rule-based terseness transformer                — v2.4.0+
 │   └── results/
 │       ├── latest.json
 │       ├── output-benchmark-latest.json
 │       ├── sample-outputs.json
 │       ├── enhanced-prompts.json
-│       └── token-benchmark-latest.json   # v2.3.0+
+│       ├── token-benchmark-latest.json              # v2.3.0+
+│       └── response-compression-benchmark.json      # v2.4.0+
 ├── README.md                       # This file
 └── LICENSE                         # MIT License
 ```
@@ -976,13 +989,19 @@ A: It's optimized for development tasks. Simple questions pass through with mini
 A: System prompts are static. 10x Architect dynamically adapts to each request.
 
 **Q: How much does the plugin itself cost in tokens?**
-A: On default (Classic) settings: ~319 tokens every session (SessionStart hook) + ~414 tokens per `/architect` invocation. In Lean Mode (`"lean": true` in `.claude/architect-config.json`, v2.3.0+): ~98 tokens per session + ~172 per invocation, measured on 10 reproducible test prompts — a 63% reduction on the first turn with 100% of the quality signals retained. See [Lean Mode](#lean-mode-v230) for the benchmark.
+A: Default (Lean, v2.4.0+): ~104 tokens per session (SessionStart hook) + ~194 per `/architect` invocation. Opt-out (Classic, `"lean": false`): ~319 + ~414, matching v2.2.1. See [Lean Mode](#lean-mode-default-since-v240).
 
 **Q: Does Lean Mode reduce quality?**
-A: On the measurable rubric — no. The 9-pattern structure score stays at 100% because the Lean template is deterministic and always emits every required keyword. What Lean Mode drops is decoration (markdown headers, long prose examples) and per-task elaboration inside each section. If you want Claude to see richer task-specific guidance inside `/architect` output, keep `"lean": false`.
+A: On the measurable rubric — no. The 9-pattern structure score stays at 100% because the Lean template is deterministic and always emits every required keyword (`goal`, `North Star`, `Do NOT`, `phases`, `TDD`, `RED-GREEN-REFACTOR`, `JSDoc`, `README`, `SOLID`, `edge case`, `step-by-step`). What Lean Mode drops is decoration (markdown headers, long prose examples) and per-task elaboration inside each section. If you want Claude to see richer task-specific guidance in `/architect` output, set `"lean": false`.
+
+**Q: What does the `<response-style>` tag do?**
+A: It's a session-wide hint telling Claude to default to terse replies, preserve code/commands/paths verbatim, and skip filler prose. Offline simulation shows ~20% output savings on filler-heavy baselines; live savings depend on model compliance and can go much higher on prose-heavy tasks.
 
 **Q: Can I pair Lean Mode with other token savings?**
 A: Yes. Set `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS=1` to save ~1,800 tokens/turn and keep the prompt cache warm. Consider also moving heavy project docs out of CLAUDE.md into on-demand skills — community guidance targets CLAUDE.md under 500 tokens.
+
+**Q: How do I upgrade from v2.2.1?**
+A: Nothing to do. After upgrade, Lean Mode is on by default on your first new session, and the config file is written to `.claude/architect-config.json` where you can review or change it. If you explicitly want the old verbose behavior, set `"lean": false` in that file.
 
 ---
 

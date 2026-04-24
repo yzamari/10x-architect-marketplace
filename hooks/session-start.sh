@@ -1,39 +1,59 @@
 #!/usr/bin/env bash
-# SessionStart hook for 10x Architect plugin
+# SessionStart hook for 10x Architect plugin (v2.4.0).
 #
-# Emits an additionalContext payload so the 10 Rules + engineering
-# principles are loaded once per session. Reads the user's project-level
-# .claude/architect-config.json to decide between:
-#   - "classic" (default)  : verbose markdown block, ~319 tok
-#   - "lean"  (opt-in)     : compact XML pointer, ~98 tok (-69%)
+# Default behavior (no config file present): Lean Mode is ACTIVE.
+# The hook also writes a default .claude/architect-config.json on first
+# run so the user can discover and edit their settings later.
 #
-# Enable lean by adding {"lean": true} to .claude/architect-config.json.
+# User overrides:
+#   {"lean": false} in .claude/architect-config.json  -> Classic payload
+#   {"lean": true}  or no file                        -> Lean payload
+#
+# Payloads:
+#   Lean    ~100 tok  - compact XML + response-style hint (default)
+#   Classic ~319 tok  - verbose markdown (v2.2.1 behavior, opt-out)
+#
+# The hook is idempotent and never fails the session: filesystem write
+# errors are swallowed so the JSON payload is always emitted.
 
-set -euo pipefail
+set -uo pipefail
 
-# Locate the user's config. Claude Code sets CLAUDE_PROJECT_DIR; fall back
-# to CWD for older versions.
-CONFIG_FILE="${CLAUDE_PROJECT_DIR:-$PWD}/.claude/architect-config.json"
-LEAN="false"
+PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$PWD}"
+CONFIG_DIR="$PROJECT_DIR/.claude"
+CONFIG_FILE="$CONFIG_DIR/architect-config.json"
+LEAN="true"
 
-if [ -f "$CONFIG_FILE" ] && grep -qE '"lean"[[:space:]]*:[[:space:]]*true' "$CONFIG_FILE"; then
-  LEAN="true"
+if [ -f "$CONFIG_FILE" ]; then
+  # Respect an explicit opt-out. Anything else (including malformed JSON,
+  # missing key, or "lean": true) falls through to Lean.
+  if grep -qE '"lean"[[:space:]]*:[[:space:]]*false' "$CONFIG_FILE" 2>/dev/null; then
+    LEAN="false"
+  fi
+else
+  # First run: bootstrap a default config so the user has something to edit.
+  # Best-effort; never fail the hook on a write error.
+  if mkdir -p "$CONFIG_DIR" 2>/dev/null; then
+    cat > "$CONFIG_FILE" 2>/dev/null <<'CONFIG'
+{
+  "mode": "C",
+  "autoDetect": true,
+  "autoApproveTimeout": 5,
+  "lean": true
+}
+CONFIG
+  fi
 fi
 
 if [ "$LEAN" = "true" ]; then
-  # Lean payload. Every keyword the plugin's benchmark scores is retained
-  # (GOAL, North Star, Do NOT, phases, TDD, RED-GREEN-REFACTOR, JSDoc,
-  # README, SOLID, SRP/OCP/LSP/ISP/DIP) so structure scoring stays intact.
   cat <<'EOF'
 {
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
-    "additionalContext": "<10x-architect mode=\"lean\">\n<principles>\nGOAL+North Star; Do NOT ≥2; 3-6 phases;\nTDD RED-GREEN-REFACTOR; JSDoc+README; SOLID(SRP/OCP/LSP/ISP/DIP).\n</principles>\n<ack>Start first reply with '✨ 10x Lean'</ack>\n<invoke>/architect [task] for full guidance</invoke>\n</10x-architect>"
+    "additionalContext": "<10x-architect>\n<principles>\nGOAL+North Star; Do NOT ≥2; 3-6 phases;\nTDD RED-GREEN-REFACTOR; JSDoc+README; SOLID(SRP/OCP/LSP/ISP/DIP).\n</principles>\n<response-style>terse by default; preserve code/commands/paths verbatim; skip filler prose</response-style>\n<invoke>/architect [task] for full guidance</invoke>\n</10x-architect>"
   }
 }
 EOF
 else
-  # Classic payload (unchanged from v2.2.1 — full verbose guidance).
   cat <<'EOF'
 {
   "hookSpecificOutput": {

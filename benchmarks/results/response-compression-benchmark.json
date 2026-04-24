@@ -1,0 +1,133 @@
+{
+  "timestamp": "2026-04-24T05:56:17.892Z",
+  "kind": "simulated-lower-bound",
+  "tokenizer": "gpt-tokenizer (cl100k_base)",
+  "note": "Rule-based prose compression. Code blocks, inline code, and URLs preserved verbatim. Three baselines reported: real \"without\" (natural Claude, short+dense), real \"with\" (10x-enhanced, already structured), and a synthetic filler-heavy set that mirrors the rhetorical patterns the <response-style> hint targets.",
+  "stored": {
+    "withoutEnhancement": {
+      "perTask": [
+        {
+          "id": "validate-email",
+          "task": "Create a function to validate email addresses",
+          "originalTokens": 106,
+          "terseTokens": 103,
+          "savedTokens": 3,
+          "savingsPct": 2.8
+        },
+        {
+          "id": "fetch-users",
+          "task": "Create a function to fetch users from an API",
+          "originalTokens": 109,
+          "terseTokens": 109,
+          "savedTokens": 0,
+          "savingsPct": 0
+        },
+        {
+          "id": "calculate-total",
+          "task": "Create a function to calculate shopping cart total with tax",
+          "originalTokens": 146,
+          "terseTokens": 142,
+          "savedTokens": 4,
+          "savingsPct": 2.7
+        },
+        {
+          "id": "format-date",
+          "task": "Create a utility function to format dates",
+          "originalTokens": 166,
+          "terseTokens": 166,
+          "savedTokens": 0,
+          "savingsPct": 0
+        },
+        {
+          "id": "user-class",
+          "task": "Create a User class with validation",
+          "originalTokens": 193,
+          "terseTokens": 193,
+          "savedTokens": 0,
+          "savingsPct": 0
+        }
+      ],
+      "total": 720,
+      "totalTerse": 713,
+      "avgSavingsPct": 1
+    },
+    "withEnhancement": {
+      "perTask": [
+        {
+          "id": "validate-email",
+          "task": "Create a function to validate email addresses",
+          "originalTokens": 365,
+          "terseTokens": 363,
+          "savedTokens": 2,
+          "savingsPct": 0.5
+        },
+        {
+          "id": "fetch-users",
+          "task": "Create a function to fetch users from an API",
+          "originalTokens": 436,
+          "terseTokens": 434,
+          "savedTokens": 2,
+          "savingsPct": 0.5
+        },
+        {
+          "id": "calculate-total",
+          "task": "Create a function to calculate shopping cart total with tax",
+          "originalTokens": 626,
+          "terseTokens": 626,
+          "savedTokens": 0,
+          "savingsPct": 0
+        },
+        {
+          "id": "format-date",
+          "task": "Create a utility function to format dates",
+          "originalTokens": 576,
+          "terseTokens": 576,
+          "savedTokens": 0,
+          "savingsPct": 0
+        },
+        {
+          "id": "user-class",
+          "task": "Create a User class with validation",
+          "originalTokens": 713,
+          "terseTokens": 713,
+          "savedTokens": 0,
+          "savingsPct": 0
+        }
+      ],
+      "total": 2716,
+      "totalTerse": 2712,
+      "avgSavingsPct": 0.1
+    }
+  },
+  "syntheticFillerHeavy": {
+    "perTask": [
+      {
+        "id": "syn-email",
+        "task": "Create a function to validate email addresses",
+        "originalTokens": 195,
+        "terseTokens": 149,
+        "savedTokens": 46,
+        "savingsPct": 23.6
+      },
+      {
+        "id": "syn-fetch",
+        "task": "Create a function to fetch users from an API",
+        "originalTokens": 164,
+        "terseTokens": 134,
+        "savedTokens": 30,
+        "savingsPct": 18.3
+      },
+      {
+        "id": "syn-cart",
+        "task": "Create a function to calculate shopping cart total with tax",
+        "originalTokens": 202,
+        "terseTokens": 163,
+        "savedTokens": 39,
+        "savingsPct": 19.3
+      }
+    ],
+    "total": 561,
+    "totalTerse": 446,
+    "avgSavingsPct": 20.5
+  }
+}

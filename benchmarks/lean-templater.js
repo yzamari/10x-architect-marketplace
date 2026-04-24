@@ -115,6 +115,7 @@ function transformToLean(classic) {
     `<tdd>TDD RED-GREEN-REFACTOR; cover edge cases + errors</tdd>`,
     `<docs>JSDoc @param/@returns; README if user-facing</docs>`,
     `<solid>SOLID: SRP·OCP·LSP·ISP·DIP</solid>`,
+    `<response-style>terse; preserve code/commands/paths verbatim; no filler</response-style>`,
     `<think>step-by-step; critique edge cases</think>`,
   ].join('\n');
 }
