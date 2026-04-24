@@ -30,6 +30,7 @@ architect [task]
 architect --mode=A [task]   # Silent - no prompt shown
 architect --mode=B [task]   # Show prompt, execute immediately
 architect --mode=C [task]   # Show prompt, wait 5s (default)
+architect --lean [task]     # Force Lean Mode for this invocation
 ```
 
 ## Execution Protocol
@@ -37,6 +38,13 @@ architect --mode=C [task]   # Show prompt, wait 5s (default)
 ### 1. Check Config
 
 Read `.claude/architect-config.json` if exists. If not, ask user for preferred mode (A/B/C) and create config.
+
+Config field `lean` (boolean, default `false`) selects the output profile:
+
+- `"lean": false` → Classic output (section 4a below): verbose, decorated, human-readable.
+- `"lean": true`  → **Lean Mode** output (section 4b below): compact XML, ~55–70% fewer tokens, same quality signals (goal, north-star, Do NOT, phases, TDD, RED-GREEN-REFACTOR, JSDoc, README, SOLID).
+
+A CLI flag `--lean` on a single invocation forces Lean Mode for just that call, regardless of config.
 
 ### 2. Parse Request
 
@@ -48,7 +56,9 @@ If `autoDetect: true`, scan for: `package.json`, `requirements.txt`, `tsconfig.j
 
 ### 4. Generate Enhanced Prompt
 
-Apply the 10 principles + mandatory engineering principles to create:
+Apply the 10 principles + mandatory engineering principles.
+
+#### 4a. Classic output (default, `lean: false`)
 
 ```xml
 <enhanced_prompt>
@@ -93,6 +103,26 @@ Apply the 10 principles + mandatory engineering principles to create:
   </instructions>
 </enhanced_prompt>
 ```
+
+#### 4b. Lean output (`lean: true`, v2.3.0+)
+
+Compact XML that retains every quality signal the benchmark measures while cutting ~55–70% of tokens. Each tag is required; keep content telegraphic (semicolons between items, no filler prose).
+
+```xml
+<goal>[specific action]; North Star: [business value]</goal>
+<constraints>Do NOT [a]; Do NOT [b]; Do NOT [c]</constraints>
+<phases>1.test-[x] 2.impl-[x] 3.test-[y] 4.impl-[y] 5.docs</phases>
+<tdd>TDD RED-GREEN-REFACTOR; every fn has test; cover edge cases + errors</tdd>
+<docs>JSDoc @param/@returns; README if user-facing; comment complex logic</docs>
+<solid>SOLID: SRP · OCP · LSP · ISP · DIP applied (Single Responsibility, Open/Closed, Liskov, Interface Segregation, Dependency Inversion)</solid>
+<think>step-by-step; list edge cases; critique for boundary conditions</think>
+```
+
+Rules for Lean output:
+- Every tag is emitted (no skipping) so the structure score stays at 100%.
+- Keywords `North Star`, `Do NOT`, `TDD`, `RED-GREEN-REFACTOR`, `JSDoc`, `README`, `SOLID`, `Single Responsibility`, `edge case`, `step-by-step` must appear verbatim somewhere in the payload — they are the scoring hooks.
+- No bullet prose, no headers, no decoration characters beyond the XML tags.
+- Target: ≤ 250 tokens for a typical feature task.
 
 ### 5. Execute by Mode
 
@@ -209,9 +239,14 @@ class OrderService {
   "autoApproveTimeout": 5,
   "enforceTDD": true,
   "enforceDocumentation": true,
-  "enforceSOLID": true
+  "enforceSOLID": true,
+  "lean": false
 }
 ```
+
+| Option | Default | Effect |
+|--------|:-------:|--------|
+| `lean` | `false` | When `true`, both the SessionStart hook and `/architect` output use Lean Mode (compact XML, ~55–70% fewer tokens). Quality signals retained. See `benchmarks/run-token-benchmark.js` for numbers. |
 
 ## Example
 

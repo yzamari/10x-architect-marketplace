@@ -1,0 +1,350 @@
+{
+  "timestamp": "2026-04-24T05:42:03.312Z",
+  "tokenizer": "gpt-tokenizer (cl100k_base) — used as an offline proxy; absolute counts are ~5% of true Claude values but the RATIO between classic and lean is stable",
+  "hook": {
+    "classicTokens": 319,
+    "leanTokens": 98,
+    "savingsPct": 69.3
+  },
+  "perPrompt": [
+    {
+      "id": "feature-simple",
+      "original": "add a search bar to the header",
+      "classicTokens": 367,
+      "leanTokens": 165,
+      "savingsPct": 55,
+      "classicScore": 100,
+      "leanScore": 100,
+      "retentionPct": 100,
+      "classicDetails": {
+        "has_goal": true,
+        "has_north_star": true,
+        "has_constraints": true,
+        "has_phases": true,
+        "has_tdd": true,
+        "has_docs": true,
+        "has_solid": true,
+        "has_edge_cases": true,
+        "has_step_by_step": true
+      },
+      "leanDetails": {
+        "has_goal": true,
+        "has_north_star": true,
+        "has_constraints": true,
+        "has_phases": true,
+        "has_tdd": true,
+        "has_docs": true,
+        "has_solid": true,
+        "has_edge_cases": true,
+        "has_step_by_step": true
+      },
+      "lean": "<goal>add a search bar component to the application header; North Star: Enable users to quickly find content, improving navigation efficiency and user</goal>\n<constraints>Do NOT implement backend search functionality yet (frontend only); Do NOT modify existing header layout significantly; Do NOT add external search library dependencies</constraints>\n<phases>1.Write-unit 2.Create 3.Write 4.Integrate 5.Add-styling</phases>\n<tdd>TDD RED-GREEN-REFACTOR; cover edge cases + errors</tdd>\n<docs>JSDoc @param/@returns; README if user-facing</docs>\n<solid>SOLID: SRP·OCP·LSP·ISP·DIP</solid>\n<think>step-by-step; critique edge cases</think>"
+    },
+    {
+      "id": "feature-medium",
+      "original": "implement user authentication",
+      "classicTokens": 427,
+      "leanTokens": 166,
+      "savingsPct": 61.1,
+      "classicScore": 100,
+      "leanScore": 100,
+      "retentionPct": 100,
+      "classicDetails": {
+        "has_goal": true,
+        "has_north_star": true,
+        "has_constraints": true,
+        "has_phases": true,
+        "has_tdd": true,
+        "has_docs": true,
+        "has_solid": true,
+        "has_edge_cases": true,
+        "has_step_by_step": true
+      },
+      "leanDetails": {
+        "has_goal": true,
+        "has_north_star": true,
+        "has_constraints": true,
+        "has_phases": true,
+        "has_tdd": true,
+        "has_docs": true,
+        "has_solid": true,
+        "has_edge_cases": true,
+        "has_step_by_step": true
+      },
+      "lean": "<goal>implement a secure user authentication system with login, logout, and session management; North Star: Enable users to securely access their accounts while maintaining excellent user</goal>\n<constraints>Do NOT implement password reset in initial scope; Do NOT store plain text passwords; Do NOT use deprecated crypto methods</constraints>\n<phases>1.Write-tests 2.Implement 3.Write-tests 4.Implement-JWT 5.Write-tests</phases>\n<tdd>TDD RED-GREEN-REFACTOR; cover edge cases + errors</tdd>\n<docs>JSDoc @param/@returns; README if user-facing</docs>\n<solid>SOLID: SRP·OCP·LSP·ISP·DIP</solid>\n<think>step-by-step; critique edge cases</think>"
+    },
+    {
+      "id": "feature-complex",
+      "original": "add a real-time notification system with websockets",
+      "classicTokens": 472,
+      "leanTokens": 175,
+      "savingsPct": 62.9,
+      "classicScore": 100,
+      "leanScore": 100,
+      "retentionPct": 100,
+      "classicDetails": {
+        "has_goal": true,
+        "has_north_star": true,
+        "has_constraints": true,
+        "has_phases": true,
+        "has_tdd": true,
+        "has_docs": true,
+        "has_solid": true,
+        "has_edge_cases": true,
+        "has_step_by_step": true
+      },
+      "leanDetails": {
+        "has_goal": true,
+        "has_north_star": true,
+        "has_constraints": true,
+        "has_phases": true,
+        "has_tdd": true,
+        "has_docs": true,
+        "has_solid": true,
+        "has_edge_cases": true,
+        "has_step_by_step": true
+      },
+      "lean": "<goal>implement a real-time notification system using WebSocket connections for instant message; North Star: Enable users to receive instant updates and notifications, improving engagement and</goal>\n<constraints>Do NOT implement push notifications (browser notifications) in…; Do NOT store notifications permanently (in-memory for MVP); Do NOT exceed 1000 concurrent connections per server initially</constraints>\n<phases>1.Write-tests 2.Implement 3.Write-tests 4.Create 5.Write-tests</phases>\n<tdd>TDD RED-GREEN-REFACTOR; cover edge cases + errors</tdd>\n<docs>JSDoc @param/@returns; README if user-facing</docs>\n<solid>SOLID: SRP·OCP·LSP·ISP·DIP</solid>\n<think>step-by-step; critique edge cases</think>"
+    },
+    {
+      "id": "bugfix-simple",
+      "original": "fix the login button not working",
+      "classicTokens": 359,
+      "leanTokens": 173,
+      "savingsPct": 51.8,
+      "classicScore": 100,
+      "leanScore": 100,
+      "retentionPct": 100,
+      "classicDetails": {
+        "has_goal": true,
+        "has_north_star": true,
+        "has_constraints": true,
+        "has_phases": true,
+        "has_tdd": true,
+        "has_docs": true,
+        "has_solid": true,
+        "has_edge_cases": true,
+        "has_step_by_step": true
+      },
+      "leanDetails": {
+        "has_goal": true,
+        "has_north_star": true,
+        "has_constraints": true,
+        "has_phases": true,
+        "has_tdd": true,
+        "has_docs": true,
+        "has_solid": true,
+        "has_edge_cases": true,
+        "has_step_by_step": true
+      },
+      "lean": "<goal>investigate and fix the login button functionality issue to restore user authentication; North Star: Ensure users can successfully log into their accounts, maintaining trust and access to</goal>\n<constraints>Do NOT modify authentication logic without understanding root cause; Do NOT change unrelated code; Do NOT remove existing error handling</constraints>\n<phases>1.Write-a 2.Investigate: 3.Investigate: 4.Investigate: 5.Identify-root</phases>\n<tdd>TDD RED-GREEN-REFACTOR; cover edge cases + errors</tdd>\n<docs>JSDoc @param/@returns; README if user-facing</docs>\n<solid>SOLID: SRP·OCP·LSP·ISP·DIP</solid>\n<think>step-by-step; critique edge cases</think>"
+    },
+    {
+      "id": "bugfix-medium",
+      "original": "fix the memory leak in the dashboard component",
+      "classicTokens": 385,
+      "leanTokens": 167,
+      "savingsPct": 56.6,
+      "classicScore": 100,
+      "leanScore": 100,
+      "retentionPct": 100,
+      "classicDetails": {
+        "has_goal": true,
+        "has_north_star": true,
+        "has_constraints": true,
+        "has_phases": true,
+        "has_tdd": true,
+        "has_docs": true,
+        "has_solid": true,
+        "has_edge_cases": true,
+        "has_step_by_step": true
+      },
+      "leanDetails": {
+        "has_goal": true,
+        "has_north_star": true,
+        "has_constraints": true,
+        "has_phases": true,
+        "has_tdd": true,
+        "has_docs": true,
+        "has_solid": true,
+        "has_edge_cases": true,
+        "has_step_by_step": true
+      },
+      "lean": "<goal>identify and fix the memory leak in the dashboard component to improve application; North Star: Ensure the dashboard performs reliably over extended use sessions without degrading</goal>\n<constraints>Do NOT refactor unrelated dashboard code; Do NOT change component architecture without profiling data; Do NOT remove functionality to fix the leak</constraints>\n<phases>1.Write-a-test 2.Profile 3.Identify 4.Trace-leak 5.Document-root</phases>\n<tdd>TDD RED-GREEN-REFACTOR; cover edge cases + errors</tdd>\n<docs>JSDoc @param/@returns; README if user-facing</docs>\n<solid>SOLID: SRP·OCP·LSP·ISP·DIP</solid>\n<think>step-by-step; critique edge cases</think>"
+    },
+    {
+      "id": "refactor-simple",
+      "original": "refactor the utils file",
+      "classicTokens": 401,
+      "leanTokens": 183,
+      "savingsPct": 54.4,
+      "classicScore": 100,
+      "leanScore": 100,
+      "retentionPct": 100,
+      "classicDetails": {
+        "has_goal": true,
+        "has_north_star": true,
+        "has_constraints": true,
+        "has_phases": true,
+        "has_tdd": true,
+        "has_docs": true,
+        "has_solid": true,
+        "has_edge_cases": true,
+        "has_step_by_step": true
+      },
+      "leanDetails": {
+        "has_goal": true,
+        "has_north_star": true,
+        "has_constraints": true,
+        "has_phases": true,
+        "has_tdd": true,
+        "has_docs": true,
+        "has_solid": true,
+        "has_edge_cases": true,
+        "has_step_by_step": true
+      },
+      "lean": "<goal>refactor the utils file to improve code organization, maintainability, and testability; North Star: Create a well-organized utility module that is easy to understand, test, and extend for</goal>\n<constraints>Do NOT change function signatures without updating all call sites; Do NOT remove any exported functions without deprecation; Do NOT combine unrelated utilities into single files</constraints>\n<phases>1.Write/verify 2.Audit-current 3.Plan-new-file 4.Create-new 5.Move-functions</phases>\n<tdd>TDD RED-GREEN-REFACTOR; cover edge cases + errors</tdd>\n<docs>JSDoc @param/@returns; README if user-facing</docs>\n<solid>SOLID: SRP·OCP·LSP·ISP·DIP</solid>\n<think>step-by-step; critique edge cases</think>"
+    },
+    {
+      "id": "refactor-medium",
+      "original": "refactor the API module to use async/await",
+      "classicTokens": 415,
+      "leanTokens": 174,
+      "savingsPct": 58.1,
+      "classicScore": 100,
+      "leanScore": 100,
+      "retentionPct": 100,
+      "classicDetails": {
+        "has_goal": true,
+        "has_north_star": true,
+        "has_constraints": true,
+        "has_phases": true,
+        "has_tdd": true,
+        "has_docs": true,
+        "has_solid": true,
+        "has_edge_cases": true,
+        "has_step_by_step": true
+      },
+      "leanDetails": {
+        "has_goal": true,
+        "has_north_star": true,
+        "has_constraints": true,
+        "has_phases": true,
+        "has_tdd": true,
+        "has_docs": true,
+        "has_solid": true,
+        "has_edge_cases": true,
+        "has_step_by_step": true
+      },
+      "lean": "<goal>refactor the API module to replace Promise chains with async/await syntax for improved; North Star: Improve developer experience and code maintainability by using modern JavaScript patterns</goal>\n<constraints>Do NOT change API response formats or behavior; Do NOT modify error handling semantics; Do NOT convert working code without tests</constraints>\n<phases>1.Write/verify 2.Audit-Promise 3.Convert-one 4.Replace-.then 5.Replace-.catch</phases>\n<tdd>TDD RED-GREEN-REFACTOR; cover edge cases + errors</tdd>\n<docs>JSDoc @param/@returns; README if user-facing</docs>\n<solid>SOLID: SRP·OCP·LSP·ISP·DIP</solid>\n<think>step-by-step; critique edge cases</think>"
+    },
+    {
+      "id": "refactor-complex",
+      "original": "refactor the monolithic service into microservices",
+      "classicTokens": 456,
+      "leanTokens": 172,
+      "savingsPct": 62.3,
+      "classicScore": 88.9,
+      "leanScore": 100,
+      "retentionPct": 112.5,
+      "classicDetails": {
+        "has_goal": true,
+        "has_north_star": true,
+        "has_constraints": true,
+        "has_phases": true,
+        "has_tdd": true,
+        "has_docs": true,
+        "has_solid": true,
+        "has_edge_cases": false,
+        "has_step_by_step": true
+      },
+      "leanDetails": {
+        "has_goal": true,
+        "has_north_star": true,
+        "has_constraints": true,
+        "has_phases": true,
+        "has_tdd": true,
+        "has_docs": true,
+        "has_solid": true,
+        "has_edge_cases": true,
+        "has_step_by_step": true
+      },
+      "lean": "<goal>refactor the monolithic service into separate microservices to improve scalability; North Star: Enable independent scaling, deployment, and development of system components, reducing</goal>\n<constraints>Do NOT break existing API contracts during migration; Do NOT migrate all services at once (incremental approach); Do NOT share databases between services initially</constraints>\n<phases>1.Write 2.Identify 3.Define-API 4.Create-first 5.Write-tests</phases>\n<tdd>TDD RED-GREEN-REFACTOR; cover edge cases + errors</tdd>\n<docs>JSDoc @param/@returns; README if user-facing</docs>\n<solid>SOLID: SRP·OCP·LSP·ISP·DIP</solid>\n<think>step-by-step; critique edge cases</think>"
+    },
+    {
+      "id": "docs-simple",
+      "original": "add documentation to the auth module",
+      "classicTokens": 403,
+      "leanTokens": 170,
+      "savingsPct": 57.8,
+      "classicScore": 100,
+      "leanScore": 100,
+      "retentionPct": 100,
+      "classicDetails": {
+        "has_goal": true,
+        "has_north_star": true,
+        "has_constraints": true,
+        "has_phases": true,
+        "has_tdd": true,
+        "has_docs": true,
+        "has_solid": true,
+        "has_edge_cases": true,
+        "has_step_by_step": true
+      },
+      "leanDetails": {
+        "has_goal": true,
+        "has_north_star": true,
+        "has_constraints": true,
+        "has_phases": true,
+        "has_tdd": true,
+        "has_docs": true,
+        "has_solid": true,
+        "has_edge_cases": true,
+        "has_step_by_step": true
+      },
+      "lean": "<goal>add comprehensive documentation to the auth module including API docs, usage examples; North Star: Enable developers to quickly understand, integrate, and extend the authentication module</goal>\n<constraints>Do NOT modify functionality while documenting; Do NOT use outdated documentation patterns; Do NOT document internal/private functions publicly</constraints>\n<phases>1.Write-tests 2.Audit-existing 3.Add-JSDoc 4.Add-JSDoc 5.Create-README</phases>\n<tdd>TDD RED-GREEN-REFACTOR; cover edge cases + errors</tdd>\n<docs>JSDoc @param/@returns; README if user-facing</docs>\n<solid>SOLID: SRP·OCP·LSP·ISP·DIP</solid>\n<think>step-by-step; critique edge cases</think>"
+    },
+    {
+      "id": "test-simple",
+      "original": "add tests for the user service",
+      "classicTokens": 452,
+      "leanTokens": 174,
+      "savingsPct": 61.5,
+      "classicScore": 100,
+      "leanScore": 100,
+      "retentionPct": 100,
+      "classicDetails": {
+        "has_goal": true,
+        "has_north_star": true,
+        "has_constraints": true,
+        "has_phases": true,
+        "has_tdd": true,
+        "has_docs": true,
+        "has_solid": true,
+        "has_edge_cases": true,
+        "has_step_by_step": true
+      },
+      "leanDetails": {
+        "has_goal": true,
+        "has_north_star": true,
+        "has_constraints": true,
+        "has_phases": true,
+        "has_tdd": true,
+        "has_docs": true,
+        "has_solid": true,
+        "has_edge_cases": true,
+        "has_step_by_step": true
+      },
+      "lean": "<goal>add comprehensive test coverage for the user service including unit tests, integration; North Star: Ensure the user service is reliable, maintainable, and protected against regressions</goal>\n<constraints>Do NOT modify user service code during initial test writing; Do NOT mock internal implementation details; Do NOT write tests that are flaky or environment-dependent</constraints>\n<phases>1.Audit-user 2.Write-unit 3.Write-unit 4.Write-tests 5.Write-tests</phases>\n<tdd>TDD RED-GREEN-REFACTOR; cover edge cases + errors</tdd>\n<docs>JSDoc @param/@returns; README if user-facing</docs>\n<solid>SOLID: SRP·OCP·LSP·ISP·DIP</solid>\n<think>step-by-step; critique edge cases</think>"
+    }
+  ],
+  "summary": {
+    "totalClassicTokens": 4137,
+    "totalLeanTokens": 1719,
+    "averageSavingsPct": 58.4,
+    "averageQualityRetentionPct": 101.1,
+    "combinedFirstTurnTaxClassic": 733,
+    "combinedFirstTurnTaxLean": 270,
+    "combinedFirstTurnSavingsPct": 63.2
+  }
+}

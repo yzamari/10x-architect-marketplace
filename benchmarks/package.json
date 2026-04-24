@@ -5,9 +5,12 @@
   "main": "run-benchmark.js",
   "scripts": {
     "benchmark": "node run-benchmark.js",
+    "benchmark:structure": "node run-benchmark-direct.js",
+    "benchmark:tokens": "node run-token-benchmark.js",
     "generate-report": "node generate-report.js"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.52.0"
+    "@anthropic-ai/sdk": "^0.52.0",
+    "gpt-tokenizer": "^3.4.0"
   }
 }

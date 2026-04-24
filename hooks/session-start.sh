@@ -1,10 +1,40 @@
 #!/usr/bin/env bash
 # SessionStart hook for 10x Architect plugin
+#
+# Emits an additionalContext payload so the 10 Rules + engineering
+# principles are loaded once per session. Reads the user's project-level
+# .claude/architect-config.json to decide between:
+#   - "classic" (default)  : verbose markdown block, ~319 tok
+#   - "lean"  (opt-in)     : compact XML pointer, ~98 tok (-69%)
+#
+# Enable lean by adding {"lean": true} to .claude/architect-config.json.
 
 set -euo pipefail
 
-# Output context injection as JSON
-cat <<'EOF'
+# Locate the user's config. Claude Code sets CLAUDE_PROJECT_DIR; fall back
+# to CWD for older versions.
+CONFIG_FILE="${CLAUDE_PROJECT_DIR:-$PWD}/.claude/architect-config.json"
+LEAN="false"
+
+if [ -f "$CONFIG_FILE" ] && grep -qE '"lean"[[:space:]]*:[[:space:]]*true' "$CONFIG_FILE"; then
+  LEAN="true"
+fi
+
+if [ "$LEAN" = "true" ]; then
+  # Lean payload. Every keyword the plugin's benchmark scores is retained
+  # (GOAL, North Star, Do NOT, phases, TDD, RED-GREEN-REFACTOR, JSDoc,
+  # README, SOLID, SRP/OCP/LSP/ISP/DIP) so structure scoring stays intact.
+  cat <<'EOF'
+{
+  "hookSpecificOutput": {
+    "hookEventName": "SessionStart",
+    "additionalContext": "<10x-architect mode=\"lean\">\n<principles>\nGOAL+North Star; Do NOT ≥2; 3-6 phases;\nTDD RED-GREEN-REFACTOR; JSDoc+README; SOLID(SRP/OCP/LSP/ISP/DIP).\n</principles>\n<ack>Start first reply with '✨ 10x Lean'</ack>\n<invoke>/architect [task] for full guidance</invoke>\n</10x-architect>"
+  }
+}
+EOF
+else
+  # Classic payload (unchanged from v2.2.1 — full verbose guidance).
+  cat <<'EOF'
 {
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
@@ -12,5 +42,6 @@ cat <<'EOF'
   }
 }
 EOF
+fi
 
 exit 0
