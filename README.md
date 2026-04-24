@@ -3,8 +3,9 @@
 > Transform vague prompts into precise, well-structured instructions using Greg Isenberg's "10 Rules for Claude Code"
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-2.4.1-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-2.5.0-blue.svg)]()
 [![Claude Code Plugin](https://img.shields.io/badge/Claude%20Code-Plugin-purple.svg)]()
+[![Cursor](https://img.shields.io/badge/Cursor-Rules%20support-6366f1.svg)]()
 [![Lean Mode](https://img.shields.io/badge/Lean%20Mode-default-brightgreen.svg)]()
 [![First-turn tax](https://img.shields.io/badge/first--turn%20tax-%E2%88%9257%25%20tokens-brightgreen.svg)]()
 
@@ -29,6 +30,8 @@ flowchart LR
 | No phases | 5-10 execution steps |
 | No TDD mention | RED-GREEN-REFACTOR workflow |
 | No architecture | SOLID principles applied |
+
+> 🖥️ **New in v2.5 — [Cursor support](#cursor-installation-v250):** copy one `.mdc` file and get the same 10x principles in every Cursor chat. 100% quality-signal score, 290 tokens/session.
 
 > 🪶 **New in v2.4 — [Lean Mode is now the default](#lean-mode-default-since-v240):** zero-config, auto-bootstrapped on first session. Cuts **56.9% of first-turn tokens** (733 → 316) while keeping 100% of the quality signals, carries a session-wide `<response-style>` hint that tightens Claude's replies, and prints a one-line `✨ 10x Lean active` banner so you can see it's working. Set `"lean": false` to restore v2.2.1 verbose; set `"showAck": false` for silent mode.
 
@@ -156,6 +159,90 @@ In Lean mode the injected context is a compact XML block naming the 6 principles
 ```
 
 That's it. On your next Claude Code session the plugin:
+
+---
+
+## Cursor Installation (v2.5.0)
+
+Cursor doesn't share Claude Code's plugin system, but it has **Cursor Rules** (`.cursor/rules/*.mdc`) — files with `alwaysApply: true` that inject context into every chat session. That's the exact equivalent of our SessionStart hook.
+
+### One-command setup
+
+```bash
+# From the repo root:
+bash cursor/install.sh /path/to/your-project
+
+# Or install into the current directory:
+bash cursor/install.sh
+```
+
+The script copies `cursor/rules/10x-architect.mdc` into `.cursor/rules/` in your project and prints confirmation.
+
+### Manual setup (30 seconds)
+
+```bash
+mkdir -p .cursor/rules
+curl -o .cursor/rules/10x-architect.mdc \
+  https://raw.githubusercontent.com/yzamari/10x-architect-marketplace/main/cursor/rules/10x-architect.mdc
+```
+
+### How it works
+
+```mermaid
+flowchart LR
+    A[Cursor chat starts] --> B[.cursor/rules/*.mdc loaded]
+    B --> C{alwaysApply: true?}
+    C -- yes --> D[Rule injected into<br/>every chat session]
+    D --> E[AI sees 10x principles<br/>Goal·Constraints·Phases·TDD·SOLID]
+
+    style D fill:#c8e6c9
+    style E fill:#fff9c4
+```
+
+The rule is injected **once per chat**, not per message — same economics as the Claude Code SessionStart hook.
+
+### Verify it's working
+
+Open a new Cursor chat and type any task. The AI should:
+- State a **goal + North Star** before writing code
+- Define at least 2 **Do NOT** constraints
+- Break work into **phases**
+- Follow **TDD RED-GREEN-REFACTOR**
+- Add **JSDoc** and **README** updates
+- Apply **SOLID** principles
+
+### Cursor vs Claude Code — feature comparison
+
+| Feature | Claude Code plugin | Cursor rule |
+|---------|:-----------------:|:-----------:|
+| Principles injected every session | ✅ | ✅ |
+| Lean/Classic toggle via config | ✅ | ❌ (always Lean) |
+| Auto-bootstrap config on first run | ✅ | ❌ |
+| `✨ 10x Lean active` banner | ✅ | ❌ |
+| `/architect [task]` full breakdown | ✅ | Type `architect: [task]` in chat |
+| Works with any AI model in IDE | ❌ (Claude only) | ✅ (GPT-4o, Claude, etc.) |
+| Token cost per session | ~122 tok | ~290 tok |
+| Quality-signal score | 100% | 100% |
+
+### Cursor benchmark results
+
+Run `node benchmarks/run-cursor-benchmark.js` to reproduce:
+
+```
+Variant                              Tokens  Signals    Score
+────────────────────────────────────────────────────────────
+No rule (baseline)                        0     0/10     0.0%
+Plain .cursorrules                       27     2/10    20.0%
+10x .mdc (body only)                    290    10/10   100.0%
+10x .mdc (full incl. front)             339    10/10   100.0%
+
+✅ Quality gate: 100.0% ≥ 90%
+✅ Token gate: 290 tokens ≤ 350 ceiling
+```
+
+The plain `.cursorrules` baseline (27 tokens, 2 signals) shows how much the structured rule adds for the token cost. 290 tokens is the "always-on tax" for having 10/10 signals present in every Cursor chat.
+
+---
 
 1. Writes `.claude/architect-config.json` with sensible defaults (`lean:true`, mode `C`).
 2. Injects the Lean context (~104 tokens) so Claude follows the 10x principles for the whole session.
@@ -819,6 +906,9 @@ node run-token-benchmark.js
 
 # Benchmark 5: Response-compression lower bound (offline, no API key) — v2.4.0+
 node run-response-compression-benchmark.js
+
+# Benchmark 6: Cursor rule token + quality score (offline, no API key) — v2.5.0+
+node run-cursor-benchmark.js
 ```
 
 Results saved to `benchmarks/results/`
@@ -1018,13 +1108,17 @@ architect --mode=C refactor database layer
 10x-architect-marketplace/
 ├── .claude-plugin/
 │   ├── marketplace.json            # Marketplace registry config
-│   └── plugin.json                 # Plugin manifest (v2.3.0)
+│   └── plugin.json                 # Plugin manifest (v2.5.0)
 ├── hooks/
 │   ├── hooks.json                  # SessionStart hook wiring
 │   └── session-start.sh            # Emits classic or lean context
 ├── skills/
 │   └── architect/
 │       └── SKILL.md                # /architect command, classic + lean templates
+├── cursor/                                          # v2.5.0+
+│   ├── rules/
+│   │   └── 10x-architect.mdc       # alwaysApply Cursor rule (copy to .cursor/rules/)
+│   └── install.sh                  # One-command installer for Cursor projects
 ├── benchmarks/
 │   ├── test-prompts.json           # 10 canonical test cases
 │   ├── run-benchmark.js            # Live API structure benchmark (needs key)
@@ -1032,6 +1126,7 @@ architect --mode=C refactor database layer
 │   ├── run-output-benchmark.js     # Live API output-quality benchmark
 │   ├── run-token-benchmark.js      # Lean Mode input-side token savings (offline)   — v2.3.0+
 │   ├── run-response-compression-benchmark.js  # Response-compression floor (offline) — v2.4.0+
+│   ├── run-cursor-benchmark.js     # Cursor rule token + quality benchmark           — v2.5.0+
 │   ├── analyze-samples.js          # Analyze saved Claude outputs
 │   ├── lean-templater.js           # Deterministic classic→lean transformer
 │   ├── response-compressor.js      # Rule-based terseness transformer                — v2.4.0+
@@ -1041,7 +1136,8 @@ architect --mode=C refactor database layer
 │       ├── sample-outputs.json
 │       ├── enhanced-prompts.json
 │       ├── token-benchmark-latest.json              # v2.3.0+
-│       └── response-compression-benchmark.json      # v2.4.0+
+│       ├── response-compression-benchmark.json      # v2.4.0+
+│       └── cursor-benchmark-latest.json             # v2.5.0+
 ├── README.md                       # This file
 └── LICENSE                         # MIT License
 ```
@@ -1098,6 +1194,18 @@ A: Yes. Set `CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS=1` to save ~1,800 tokens/turn 
 
 **Q: How do I upgrade from v2.2.1?**
 A: Nothing to do. After upgrade, Lean Mode is on by default on your first new session, and the config file is written to `.claude/architect-config.json` where you can review or change it. If you explicitly want the old verbose behavior, set `"lean": false` in that file.
+
+**Q: Does this work with Cursor?**
+A: Yes, since v2.5.0. Cursor uses `.cursor/rules/*.mdc` files instead of Claude Code plugins. Copy `cursor/rules/10x-architect.mdc` into your project's `.cursor/rules/` directory (or run `bash cursor/install.sh`). The rule has `alwaysApply: true` so it's injected into every Cursor chat — equivalent to the Claude Code SessionStart hook. See [Cursor Installation](#cursor-installation-v250).
+
+**Q: Does the Cursor rule work with non-Claude models (GPT-4o, etc.)?**
+A: Yes. The `.mdc` rule is plain markdown instructions that any model can follow. Unlike the Claude Code plugin (Claude-only), the Cursor rule works with whatever model you have selected in Cursor — GPT-4o, Claude 3.5/4, Gemini, etc.
+
+**Q: How do I use the `/architect` command equivalent in Cursor?**
+A: Type `architect: [task]` in the Cursor chat. Example: `architect: add JWT authentication to the Express API`. The AI will respond with a full structured breakdown (goal, constraints, phases, TDD, SOLID) because the always-apply rule instructs it to do so when asked with that pattern.
+
+**Q: How much does the Cursor rule cost in tokens?**
+A: ~290 tokens per chat session (the rule body injected by Cursor). Full frontmatter is ~339 tokens but the YAML header is metadata Cursor reads, not injected into the AI context. Run `node benchmarks/run-cursor-benchmark.js` to reproduce.
 
 ---
 

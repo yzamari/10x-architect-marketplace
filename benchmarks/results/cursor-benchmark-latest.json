@@ -1,0 +1,32 @@
+{
+  "timestamp": "2026-04-24T07:13:25.690Z",
+  "gatesPass": true,
+  "tokenCeiling": 350,
+  "qualityFloor": 90,
+  "variants": {
+    "No rule (baseline)": {
+      "tokens": 0,
+      "signalsFound": 0,
+      "signalTotal": 10,
+      "scorePercent": 0
+    },
+    "Plain .cursorrules": {
+      "tokens": 27,
+      "signalsFound": 2,
+      "signalTotal": 10,
+      "scorePercent": 20
+    },
+    "10x .mdc (body only)": {
+      "tokens": 290,
+      "signalsFound": 10,
+      "signalTotal": 10,
+      "scorePercent": 100
+    },
+    "10x .mdc (full incl. front)": {
+      "tokens": 339,
+      "signalsFound": 10,
+      "signalTotal": 10,
+      "scorePercent": 100
+    }
+  }
+}
