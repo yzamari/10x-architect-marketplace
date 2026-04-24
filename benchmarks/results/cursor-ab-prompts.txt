@@ -1,0 +1,14 @@
+# Cursor A/B prompts
+# Paste each prompt into a fresh Cursor chat in order.
+# Run once with the .mdc rule disabled, once with it enabled.
+
+ 1. [feature-simple] add a search bar to the header
+ 2. [feature-medium] implement user authentication
+ 3. [feature-complex] add a real-time notification system with websockets
+ 4. [bugfix-simple] fix the login button not working
+ 5. [bugfix-medium] fix the memory leak in the dashboard component
+ 6. [refactor-simple] refactor the utils file
+ 7. [refactor-medium] refactor the API module to use async/await
+ 8. [refactor-complex] refactor the monolithic service into microservices
+ 9. [docs-simple] add documentation to the auth module
+10. [test-simple] add tests for the user service

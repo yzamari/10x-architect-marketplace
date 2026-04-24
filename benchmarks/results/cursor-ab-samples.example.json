@@ -1,0 +1,21 @@
+{
+  "description": "Cursor A/B captures for 10x MDC rule",
+  "runs": [
+    {
+      "id": "feature-simple",
+      "prompt": "add a search bar to the header",
+      "without": {
+        "response": "Paste the full WITHOUT-rule Cursor response here",
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "totalTokens": 0
+      },
+      "with": {
+        "response": "Paste the full WITH-rule Cursor response here",
+        "inputTokens": 290,
+        "outputTokens": 0,
+        "totalTokens": 0
+      }
+    }
+  ]
+}

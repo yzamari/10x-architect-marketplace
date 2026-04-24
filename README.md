@@ -910,17 +910,32 @@ node run-response-compression-benchmark.js
 
 # Benchmark 6: Cursor rule token + quality score (offline, no API key) — v2.5.0+
 node run-cursor-benchmark.js
+
+# Benchmark 7: Cursor A/B from real chat captures (offline, no API key) — v2.6.0+
+# 1) Generate a scaffold for the 10 canonical prompts:
+node generate-cursor-ab-scaffold.js
+# 2) In the target project (where the .mdc rule is installed), toggle the rule off:
+bash ../cursor/toggle-rule.sh /path/to/your-test-project
+# 3) Open a NEW Cursor chat per prompt in results/cursor-ab-prompts.txt,
+#    paste each full response into the matching without.response field
+#    in results/cursor-ab-samples.json.
+# 4) Toggle the rule back on and repeat, pasting into with.response:
+bash ../cursor/toggle-rule.sh /path/to/your-test-project
+# 5) Score the A/B:
+node run-cursor-ab.js --input results/cursor-ab-samples.json
 ```
 
 Results saved to `benchmarks/results/`
 
 **Sample outputs** are real Claude responses stored in `benchmarks/results/sample-outputs.json` - you can inspect them to verify the analysis is fair.
 
+Latest consolidated suite report: `benchmarks/results/latest-suite-report.md`
+
 ---
 
 ## Lean Mode (default since v2.4.0)
 
-> **TL;DR** — zero-config. Install the plugin and Lean Mode is on. Cuts **59.3% of first-turn tokens** (733 → 298), **53.1% of `/architect` output**, **67.4% of the SessionStart hook**, with **100% retention** of the 9 quality signals the benchmark scores. Adds a session-wide `<response-style>` hint that's measured to save another **~20%** of output tokens on filler-heavy replies (simulated lower bound — live API savings typically higher).
+> **TL;DR** — zero-config. Install the plugin and Lean Mode is on. Cuts **56.9% of first-turn tokens** (733 → 316), **53.1% of `/architect` output**, **61.8% of the SessionStart hook** (default with `showAck:true`), with **101.1% retention** of the 9 quality signals the benchmark scores. Adds a session-wide `<response-style>` hint that's measured to save another **~20%** of output tokens on filler-heavy replies (simulated lower bound — live API savings typically higher).
 
 ### Why
 

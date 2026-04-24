@@ -1,0 +1,499 @@
+{
+  "timestamp": "2026-04-24T09:16:26.680Z",
+  "description": "Cursor A/B captures for 10x MDC rule, generated in-session by the Cursor model answering each prompt twice: once as if the .mdc rule is not loaded (baseline), once with the 10x-architect.mdc principles applied.",
+  "inputFile": "/Users/yahavzamari/Projects/GitHub/10x-architect-marketplace/benchmarks/results/cursor-ab-samples.json",
+  "summary": {
+    "sampleSize": 10,
+    "averages": {
+      "qualityScoreWithoutPct": 1.4,
+      "qualityScoreWithPct": 90,
+      "qualityScoreDeltaPct": 88.6,
+      "totalTokensWithout": 82.5,
+      "totalTokensWith": 291,
+      "totalTokensDelta": 208.5,
+      "qualityPerTokenWithout": 0.0357,
+      "qualityPerTokenWith": 0.3174,
+      "qualityPerTokenDelta": 0.2817,
+      "correctnessSignalWithoutPct": 80,
+      "correctnessSignalWithPct": 80,
+      "correctnessSignalDeltaPct": 0
+    },
+    "byMetric": {
+      "goal_clarity": {
+        "name": "Goal clarity",
+        "withoutPct": 0,
+        "withPct": 100,
+        "deltaPct": 100
+      },
+      "constraints": {
+        "name": "Constraints / Do NOT",
+        "withoutPct": 0,
+        "withPct": 100,
+        "deltaPct": 100
+      },
+      "phases": {
+        "name": "Phased execution",
+        "withoutPct": 0,
+        "withPct": 100,
+        "deltaPct": 100
+      },
+      "tdd": {
+        "name": "TDD presence",
+        "withoutPct": 0,
+        "withPct": 50,
+        "deltaPct": 50
+      },
+      "docs": {
+        "name": "Docs/JSDoc mention",
+        "withoutPct": 10,
+        "withPct": 100,
+        "deltaPct": 90
+      },
+      "solid": {
+        "name": "SOLID/OOP mention",
+        "withoutPct": 0,
+        "withPct": 80,
+        "deltaPct": 80
+      },
+      "edge_cases": {
+        "name": "Edge-case handling",
+        "withoutPct": 0,
+        "withPct": 100,
+        "deltaPct": 100
+      }
+    }
+  },
+  "gates": {
+    "configured": {
+      "minQualityLiftPct": 25,
+      "minQualityPerTokenDelta": 0,
+      "minCorrectnessNonRegressionPct": 0
+    },
+    "qualityLiftPass": true,
+    "qualityPerTokenPass": true,
+    "correctnessNonRegressionPass": true,
+    "overallPass": true
+  },
+  "runs": [
+    {
+      "id": "feature-simple",
+      "prompt": "add a search bar to the header",
+      "without": {
+        "qualityScorePct": 0,
+        "qualityHits": "0/7",
+        "totalTokens": 109,
+        "qualityPerToken": 0,
+        "correctnessSignal": true,
+        "metricDetails": {
+          "goal_clarity": false,
+          "constraints": false,
+          "phases": false,
+          "tdd": false,
+          "docs": false,
+          "solid": false,
+          "edge_cases": false
+        }
+      },
+      "with": {
+        "qualityScorePct": 100,
+        "qualityHits": "7/7",
+        "totalTokens": 315,
+        "qualityPerToken": 0.3175,
+        "correctnessSignal": true,
+        "metricDetails": {
+          "goal_clarity": true,
+          "constraints": true,
+          "phases": true,
+          "tdd": true,
+          "docs": true,
+          "solid": true,
+          "edge_cases": true
+        }
+      },
+      "delta": {
+        "qualityScorePct": 100,
+        "totalTokens": 206,
+        "qualityPerToken": 0.3175,
+        "correctnessSignal": 0
+      }
+    },
+    {
+      "id": "feature-medium",
+      "prompt": "implement user authentication",
+      "without": {
+        "qualityScorePct": 0,
+        "qualityHits": "0/7",
+        "totalTokens": 140,
+        "qualityPerToken": 0,
+        "correctnessSignal": true,
+        "metricDetails": {
+          "goal_clarity": false,
+          "constraints": false,
+          "phases": false,
+          "tdd": false,
+          "docs": false,
+          "solid": false,
+          "edge_cases": false
+        }
+      },
+      "with": {
+        "qualityScorePct": 100,
+        "qualityHits": "7/7",
+        "totalTokens": 393,
+        "qualityPerToken": 0.2545,
+        "correctnessSignal": true,
+        "metricDetails": {
+          "goal_clarity": true,
+          "constraints": true,
+          "phases": true,
+          "tdd": true,
+          "docs": true,
+          "solid": true,
+          "edge_cases": true
+        }
+      },
+      "delta": {
+        "qualityScorePct": 100,
+        "totalTokens": 253,
+        "qualityPerToken": 0.2545,
+        "correctnessSignal": 0
+      }
+    },
+    {
+      "id": "feature-complex",
+      "prompt": "add a real-time notification system with websockets",
+      "without": {
+        "qualityScorePct": 0,
+        "qualityHits": "0/7",
+        "totalTokens": 112,
+        "qualityPerToken": 0,
+        "correctnessSignal": true,
+        "metricDetails": {
+          "goal_clarity": false,
+          "constraints": false,
+          "phases": false,
+          "tdd": false,
+          "docs": false,
+          "solid": false,
+          "edge_cases": false
+        }
+      },
+      "with": {
+        "qualityScorePct": 85.7,
+        "qualityHits": "6/7",
+        "totalTokens": 341,
+        "qualityPerToken": 0.2514,
+        "correctnessSignal": true,
+        "metricDetails": {
+          "goal_clarity": true,
+          "constraints": true,
+          "phases": true,
+          "tdd": false,
+          "docs": true,
+          "solid": true,
+          "edge_cases": true
+        }
+      },
+      "delta": {
+        "qualityScorePct": 85.7,
+        "totalTokens": 229,
+        "qualityPerToken": 0.2514,
+        "correctnessSignal": 0
+      }
+    },
+    {
+      "id": "bugfix-simple",
+      "prompt": "fix the login button not working",
+      "without": {
+        "qualityScorePct": 0,
+        "qualityHits": "0/7",
+        "totalTokens": 69,
+        "qualityPerToken": 0,
+        "correctnessSignal": true,
+        "metricDetails": {
+          "goal_clarity": false,
+          "constraints": false,
+          "phases": false,
+          "tdd": false,
+          "docs": false,
+          "solid": false,
+          "edge_cases": false
+        }
+      },
+      "with": {
+        "qualityScorePct": 85.7,
+        "qualityHits": "6/7",
+        "totalTokens": 290,
+        "qualityPerToken": 0.2956,
+        "correctnessSignal": true,
+        "metricDetails": {
+          "goal_clarity": true,
+          "constraints": true,
+          "phases": true,
+          "tdd": true,
+          "docs": true,
+          "solid": false,
+          "edge_cases": true
+        }
+      },
+      "delta": {
+        "qualityScorePct": 85.7,
+        "totalTokens": 221,
+        "qualityPerToken": 0.2956,
+        "correctnessSignal": 0
+      }
+    },
+    {
+      "id": "bugfix-medium",
+      "prompt": "fix the memory leak in the dashboard component",
+      "without": {
+        "qualityScorePct": 0,
+        "qualityHits": "0/7",
+        "totalTokens": 65,
+        "qualityPerToken": 0,
+        "correctnessSignal": true,
+        "metricDetails": {
+          "goal_clarity": false,
+          "constraints": false,
+          "phases": false,
+          "tdd": false,
+          "docs": false,
+          "solid": false,
+          "edge_cases": false
+        }
+      },
+      "with": {
+        "qualityScorePct": 85.7,
+        "qualityHits": "6/7",
+        "totalTokens": 256,
+        "qualityPerToken": 0.3348,
+        "correctnessSignal": true,
+        "metricDetails": {
+          "goal_clarity": true,
+          "constraints": true,
+          "phases": true,
+          "tdd": true,
+          "docs": true,
+          "solid": false,
+          "edge_cases": true
+        }
+      },
+      "delta": {
+        "qualityScorePct": 85.7,
+        "totalTokens": 191,
+        "qualityPerToken": 0.3348,
+        "correctnessSignal": 0
+      }
+    },
+    {
+      "id": "refactor-simple",
+      "prompt": "refactor the utils file",
+      "without": {
+        "qualityScorePct": 0,
+        "qualityHits": "0/7",
+        "totalTokens": 42,
+        "qualityPerToken": 0,
+        "correctnessSignal": false,
+        "metricDetails": {
+          "goal_clarity": false,
+          "constraints": false,
+          "phases": false,
+          "tdd": false,
+          "docs": false,
+          "solid": false,
+          "edge_cases": false
+        }
+      },
+      "with": {
+        "qualityScorePct": 85.7,
+        "qualityHits": "6/7",
+        "totalTokens": 211,
+        "qualityPerToken": 0.4062,
+        "correctnessSignal": true,
+        "metricDetails": {
+          "goal_clarity": true,
+          "constraints": true,
+          "phases": true,
+          "tdd": false,
+          "docs": true,
+          "solid": true,
+          "edge_cases": true
+        }
+      },
+      "delta": {
+        "qualityScorePct": 85.7,
+        "totalTokens": 169,
+        "qualityPerToken": 0.4062,
+        "correctnessSignal": 1
+      }
+    },
+    {
+      "id": "refactor-medium",
+      "prompt": "refactor the API module to use async/await",
+      "without": {
+        "qualityScorePct": 0,
+        "qualityHits": "0/7",
+        "totalTokens": 77,
+        "qualityPerToken": 0,
+        "correctnessSignal": true,
+        "metricDetails": {
+          "goal_clarity": false,
+          "constraints": false,
+          "phases": false,
+          "tdd": false,
+          "docs": false,
+          "solid": false,
+          "edge_cases": false
+        }
+      },
+      "with": {
+        "qualityScorePct": 85.7,
+        "qualityHits": "6/7",
+        "totalTokens": 296,
+        "qualityPerToken": 0.2896,
+        "correctnessSignal": true,
+        "metricDetails": {
+          "goal_clarity": true,
+          "constraints": true,
+          "phases": true,
+          "tdd": false,
+          "docs": true,
+          "solid": true,
+          "edge_cases": true
+        }
+      },
+      "delta": {
+        "qualityScorePct": 85.7,
+        "totalTokens": 219,
+        "qualityPerToken": 0.2896,
+        "correctnessSignal": 0
+      }
+    },
+    {
+      "id": "refactor-complex",
+      "prompt": "refactor the monolithic service into microservices",
+      "without": {
+        "qualityScorePct": 0,
+        "qualityHits": "0/7",
+        "totalTokens": 63,
+        "qualityPerToken": 0,
+        "correctnessSignal": false,
+        "metricDetails": {
+          "goal_clarity": false,
+          "constraints": false,
+          "phases": false,
+          "tdd": false,
+          "docs": false,
+          "solid": false,
+          "edge_cases": false
+        }
+      },
+      "with": {
+        "qualityScorePct": 85.7,
+        "qualityHits": "6/7",
+        "totalTokens": 273,
+        "qualityPerToken": 0.314,
+        "correctnessSignal": false,
+        "metricDetails": {
+          "goal_clarity": true,
+          "constraints": true,
+          "phases": true,
+          "tdd": false,
+          "docs": true,
+          "solid": true,
+          "edge_cases": true
+        }
+      },
+      "delta": {
+        "qualityScorePct": 85.7,
+        "totalTokens": 210,
+        "qualityPerToken": 0.314,
+        "correctnessSignal": 0
+      }
+    },
+    {
+      "id": "docs-simple",
+      "prompt": "add documentation to the auth module",
+      "without": {
+        "qualityScorePct": 14.3,
+        "qualityHits": "1/7",
+        "totalTokens": 40,
+        "qualityPerToken": 0.3571,
+        "correctnessSignal": true,
+        "metricDetails": {
+          "goal_clarity": false,
+          "constraints": false,
+          "phases": false,
+          "tdd": false,
+          "docs": true,
+          "solid": false,
+          "edge_cases": false
+        }
+      },
+      "with": {
+        "qualityScorePct": 85.7,
+        "qualityHits": "6/7",
+        "totalTokens": 216,
+        "qualityPerToken": 0.3968,
+        "correctnessSignal": false,
+        "metricDetails": {
+          "goal_clarity": true,
+          "constraints": true,
+          "phases": true,
+          "tdd": false,
+          "docs": true,
+          "solid": true,
+          "edge_cases": true
+        }
+      },
+      "delta": {
+        "qualityScorePct": 71.4,
+        "totalTokens": 176,
+        "qualityPerToken": 0.0397,
+        "correctnessSignal": -1
+      }
+    },
+    {
+      "id": "test-simple",
+      "prompt": "add tests for the user service",
+      "without": {
+        "qualityScorePct": 0,
+        "qualityHits": "0/7",
+        "totalTokens": 108,
+        "qualityPerToken": 0,
+        "correctnessSignal": true,
+        "metricDetails": {
+          "goal_clarity": false,
+          "constraints": false,
+          "phases": false,
+          "tdd": false,
+          "docs": false,
+          "solid": false,
+          "edge_cases": false
+        }
+      },
+      "with": {
+        "qualityScorePct": 100,
+        "qualityHits": "7/7",
+        "totalTokens": 319,
+        "qualityPerToken": 0.3135,
+        "correctnessSignal": true,
+        "metricDetails": {
+          "goal_clarity": true,
+          "constraints": true,
+          "phases": true,
+          "tdd": true,
+          "docs": true,
+          "solid": true,
+          "edge_cases": true
+        }
+      },
+      "delta": {
+        "qualityScorePct": 100,
+        "totalTokens": 211,
+        "qualityPerToken": 0.3135,
+        "correctnessSignal": 0
+      }
+    }
+  ]
+}

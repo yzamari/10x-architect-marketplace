@@ -1,0 +1,114 @@
+{
+  "description": "Cursor MDC A/B scaffold. Paste real Cursor responses into each without.response and with.response field.",
+  "generatedAt": "2026-04-24T09:21:20.687Z",
+  "instructions": [
+    "1) In your test project, disable the MDC rule (run: bash cursor/toggle-rule.sh /path/to/test-project)",
+    "2) For each prompt in cursor-ab-prompts.txt, open a NEW Cursor chat and send the prompt.",
+    "3) Paste the full reply into the matching without.response field.",
+    "4) Re-enable the rule (run the toggle script again) and repeat, pasting into with.response.",
+    "5) Optional: fill inputTokens/outputTokens/totalTokens per run from the Cursor UI.",
+    "6) Run: npm run benchmark:cursor:ab"
+  ],
+  "runs": [
+    {
+      "id": "feature-simple",
+      "prompt": "add a search bar to the header",
+      "without": {
+        "response": ""
+      },
+      "with": {
+        "response": ""
+      }
+    },
+    {
+      "id": "feature-medium",
+      "prompt": "implement user authentication",
+      "without": {
+        "response": ""
+      },
+      "with": {
+        "response": ""
+      }
+    },
+    {
+      "id": "feature-complex",
+      "prompt": "add a real-time notification system with websockets",
+      "without": {
+        "response": ""
+      },
+      "with": {
+        "response": ""
+      }
+    },
+    {
+      "id": "bugfix-simple",
+      "prompt": "fix the login button not working",
+      "without": {
+        "response": ""
+      },
+      "with": {
+        "response": ""
+      }
+    },
+    {
+      "id": "bugfix-medium",
+      "prompt": "fix the memory leak in the dashboard component",
+      "without": {
+        "response": ""
+      },
+      "with": {
+        "response": ""
+      }
+    },
+    {
+      "id": "refactor-simple",
+      "prompt": "refactor the utils file",
+      "without": {
+        "response": ""
+      },
+      "with": {
+        "response": ""
+      }
+    },
+    {
+      "id": "refactor-medium",
+      "prompt": "refactor the API module to use async/await",
+      "without": {
+        "response": ""
+      },
+      "with": {
+        "response": ""
+      }
+    },
+    {
+      "id": "refactor-complex",
+      "prompt": "refactor the monolithic service into microservices",
+      "without": {
+        "response": ""
+      },
+      "with": {
+        "response": ""
+      }
+    },
+    {
+      "id": "docs-simple",
+      "prompt": "add documentation to the auth module",
+      "without": {
+        "response": ""
+      },
+      "with": {
+        "response": ""
+      }
+    },
+    {
+      "id": "test-simple",
+      "prompt": "add tests for the user service",
+      "without": {
+        "response": ""
+      },
+      "with": {
+        "response": ""
+      }
+    }
+  ]
+}

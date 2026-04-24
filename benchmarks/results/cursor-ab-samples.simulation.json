@@ -1,0 +1,107 @@
+{
+  "description": "Cursor A/B captures for 10x MDC rule, generated in-session by the Cursor model answering each prompt twice: once as if the .mdc rule is not loaded (baseline), once with the 10x-architect.mdc principles applied.",
+  "generatedBy": "Cursor model (Claude) self-run A/B",
+  "mdcTokensPerSession": 290,
+  "runs": [
+    {
+      "id": "feature-simple",
+      "prompt": "add a search bar to the header",
+      "without": {
+        "response": "Here's a simple search bar you can drop into the Header component.\n\n```tsx\nimport { useState } from 'react';\n\nexport function SearchBar() {\n  const [q, setQ] = useState('');\n  return (\n    <input\n      type=\"search\"\n      placeholder=\"Search...\"\n      value={q}\n      onChange={(e) => setQ(e.target.value)}\n    />\n  );\n}\n```\n\nImport it in your Header and render it next to the logo. You can style it with Tailwind or plain CSS."
+      },
+      "with": {
+        "response": "Goal: Add a search bar to the header component.\nNorth Star: Let users find content quickly without navigating away.\n\nConstraints:\n- Do NOT implement a backend search in this scope.\n- Do NOT change the existing Header layout beyond adding the input.\n- Do NOT break keyboard navigation or accessibility.\n\nPhases:\n1. Read existing Header to match patterns.\n2. Write failing tests for SearchBar (RED): placeholder text, controlled value, onSearch callback, aria-label present, edge case empty input.\n3. Implement minimal SearchBar (GREEN): controlled input, debounced onSearch.\n4. Integrate into Header without altering existing layout.\n5. REFACTOR: extract hook useSearchInput if reused; keep SOLID SRP (input concerns only).\n6. Docs: JSDoc @param/@returns on the component props; update README with usage snippet.\n\n```tsx\n/**\n * SearchBar renders an accessible search input.\n * @param onSearch invoked with the current query on change (debounced upstream).\n * @returns JSX input element.\n */\nexport function SearchBar({ onSearch }: { onSearch: (q: string) => void }) {\n  return (\n    <input\n      type=\"search\"\n      aria-label=\"Search site\"\n      placeholder=\"Search...\"\n      onChange={(e) => onSearch(e.target.value)}\n    />\n  );\n}\n```\n\nSOLID: Single Responsibility (input only). Open/Closed via onSearch injection (DIP). Think step-by-step; validate edge cases: empty string, long input, paste event."
+      }
+    },
+    {
+      "id": "feature-medium",
+      "prompt": "implement user authentication",
+      "without": {
+        "response": "Sure. Here's a basic JWT auth setup for Express.\n\n```ts\nimport jwt from 'jsonwebtoken';\nimport bcrypt from 'bcrypt';\n\nexport async function login(req, res) {\n  const { email, password } = req.body;\n  const user = await db.users.findOne({ email });\n  if (!user) return res.status(401).send('bad creds');\n  const ok = await bcrypt.compare(password, user.hash);\n  if (!ok) return res.status(401).send('bad creds');\n  const token = jwt.sign({ sub: user.id }, process.env.JWT_SECRET);\n  res.json({ token });\n}\n```\n\nYou'll need a middleware to verify the token on protected routes."
+      },
+      "with": {
+        "response": "Goal: Implement JWT-based user authentication.\nNorth Star: Secure user access with minimal friction and no schema churn.\n\nConstraints:\n- Do NOT implement password reset in this scope.\n- Do NOT modify existing users table schema.\n- Do NOT store secrets in source control.\n\nPhases:\n1. Audit existing auth patterns and middleware wiring.\n2. RED: write failing tests for login handler (valid creds, invalid creds, missing fields, locked user, token TTL claim).\n3. GREEN: implement login + verifyToken middleware minimally.\n4. RED: tests for logout + refresh-token edge cases.\n5. GREEN: implement logout (revoke) + refresh.\n6. REFACTOR: extract AuthService (SRP); inject tokenProvider (DIP); keep controllers thin.\n7. Docs: JSDoc @param/@returns for AuthService and middleware; README section for configuration.\n\n```ts\n/**\n * Authenticates a user and returns a signed JWT.\n * @param creds email + password\n * @returns token string\n * @throws InvalidCredentialsError on bad email/password\n */\nexport class AuthService {\n  constructor(private readonly users: UserRepo, private readonly tokens: TokenProvider) {}\n  async login(creds: { email: string; password: string }): Promise<string> {\n    if (!creds?.email || !creds?.password) throw new InvalidCredentialsError();\n    const user = await this.users.findByEmail(creds.email);\n    if (!user) throw new InvalidCredentialsError();\n    const ok = await this.users.verifyPassword(user, creds.password);\n    if (!ok) throw new InvalidCredentialsError();\n    return this.tokens.sign({ sub: user.id });\n  }\n}\n```\n\nSOLID: SRP (AuthService only authenticates), OCP (swap TokenProvider), DIP (depend on interfaces). Edge cases: empty input, unknown user, timing attacks (use constant-time compare), expired tokens, clock skew."
+      }
+    },
+    {
+      "id": "feature-complex",
+      "prompt": "add a real-time notification system with websockets",
+      "without": {
+        "response": "You can use Socket.IO.\n\n```ts\nimport { Server } from 'socket.io';\nconst io = new Server(httpServer, { cors: { origin: '*' } });\nio.on('connection', (socket) => {\n  socket.on('subscribe', (userId) => socket.join(`user:${userId}`));\n});\nexport function notify(userId: string, payload: unknown) {\n  io.to(`user:${userId}`).emit('notification', payload);\n}\n```\n\nOn the client, connect with socket.io-client and listen for 'notification'."
+      },
+      "with": {
+        "response": "Goal: Add a real-time notification system over WebSockets.\nNorth Star: Users see relevant events within < 1s without polling.\n\nConstraints:\n- Do NOT broadcast to unauthorized sockets.\n- Do NOT block the HTTP request path with socket work.\n- Do NOT persist PII in notification payloads.\n\nPhases:\n1. Design channels: per-user rooms, auth handshake.\n2. RED: tests for auth handshake, subscribe to own room only, drop unauthorized subscribe, reconnect resumes missed (bounded) events.\n3. GREEN: minimal server using Socket.IO with a NotificationGateway class.\n4. RED: tests for client hook useNotifications (connects, unsubscribes on unmount, handles errors).\n5. GREEN: implement useNotifications hook.\n6. REFACTOR: introduce EventBus interface (DIP) so transport is swappable (SSE, WS). Apply SRP: gateway only transports; service composes domain events.\n7. Docs: JSDoc @param/@returns on gateway + hook; README with wiring + env vars.\n\n```ts\n/**\n * Sends a notification to a specific user over the configured transport.\n * @param userId target user id\n * @param payload event payload (no PII)\n * @returns void\n */\nexport class NotificationGateway {\n  constructor(private readonly bus: EventBus) {}\n  notify(userId: string, payload: NotificationPayload): void {\n    this.bus.publish(`user:${userId}`, payload);\n  }\n}\n```\n\nSOLID: SRP (gateway vs service), OCP (transport abstraction), DIP (EventBus injected). Edge cases: disconnects, duplicate delivery, backpressure, auth token expiry mid-session."
+      }
+    },
+    {
+      "id": "bugfix-simple",
+      "prompt": "fix the login button not working",
+      "without": {
+        "response": "Probably the click handler isn't wired. Open LoginButton and make sure onClick calls the login mutation.\n\n```tsx\n<button onClick={() => login({ email, password })}>Login</button>\n```\n\nAlso check the devtools console for errors and verify the form doesn't submit and reload the page (add type=\"button\" or prevent default)."
+      },
+      "with": {
+        "response": "Goal: Investigate and fix the non-working login button.\nNorth Star: Users can sign in successfully with no regression elsewhere.\n\nConstraints:\n- Do NOT change auth flow without confirming root cause.\n- Do NOT modify unrelated code.\n- Do NOT ship without a regression test.\n\nPhases:\n1. Reproduce: capture exact failure (console error, network tab, event firing?).\n2. Trace: inspect onClick binding, event.preventDefault, form submit behavior, mutation state.\n3. RED: write failing test capturing the bug (click triggers login call; default form submit prevented).\n4. GREEN: apply minimal fix (e.g., type=\"button\", correct handler binding, await mutation before navigation).\n5. REFACTOR: extract useLogin hook if logic is duplicated (SRP).\n6. Docs: update README if user-facing behavior changed; inline comment only if non-obvious why.\n\n```tsx\n/**\n * Handles login click; prevents default form submit and awaits mutation.\n * @param e click event\n * @returns Promise<void>\n */\nasync function onLoginClick(e: React.MouseEvent) {\n  e.preventDefault();\n  if (!email || !password) return;\n  try {\n    await login({ email, password });\n  } catch (err) {\n    showError(err);\n  }\n}\n```\n\nEdge cases: double-click, network error, expired session, keyboard Enter submit path. Think step-by-step before editing."
+      }
+    },
+    {
+      "id": "bugfix-medium",
+      "prompt": "fix the memory leak in the dashboard component",
+      "without": {
+        "response": "Usually it's unremoved event listeners or intervals. In the Dashboard useEffect, make sure you return a cleanup.\n\n```tsx\nuseEffect(() => {\n  const id = setInterval(tick, 1000);\n  return () => clearInterval(id);\n}, []);\n```\n\nAlso unsubscribe from any sockets or observers in cleanup."
+      },
+      "with": {
+        "response": "Goal: Identify and fix the memory leak in the Dashboard component.\nNorth Star: Stable memory usage over long sessions; no detached listeners.\n\nConstraints:\n- Do NOT change component API.\n- Do NOT add polling as a workaround.\n- Do NOT skip a regression test.\n\nPhases:\n1. Reproduce: profile heap snapshots across mount/unmount cycles; identify retainers.\n2. Hypothesize: likely uncleaned listeners, intervals, or socket subscriptions.\n3. RED: write a failing test that mounts/unmounts repeatedly and asserts listener/subscription counts return to baseline.\n4. GREEN: add cleanup in useEffect returns; ensure AbortController for fetches; unsubscribe observers and sockets.\n5. REFACTOR: extract useDashboardStream hook (SRP) encapsulating subscription lifecycle (OCP for transport).\n6. Docs: JSDoc on the new hook; note in README if behavior-observable.\n\n```tsx\nuseEffect(() => {\n  const controller = new AbortController();\n  const sub = stream.subscribe(onTick, { signal: controller.signal });\n  return () => {\n    controller.abort();\n    sub.unsubscribe();\n  };\n}, [stream]);\n```\n\nEdge cases: rapid remount (React Strict Mode), concurrent subscriptions, error thrown before cleanup registration."
+      }
+    },
+    {
+      "id": "refactor-simple",
+      "prompt": "refactor the utils file",
+      "without": {
+        "response": "Split the file by concern: string utils, date utils, array utils, each in their own module. Add an index.ts that re-exports. Remove unused helpers and replace duplicated logic with the dedicated function."
+      },
+      "with": {
+        "response": "Goal: Refactor utils.ts for clarity and reuse.\nNorth Star: Easier discovery and testing of utilities, no consumer breakage.\n\nConstraints:\n- Do NOT change public function signatures.\n- Do NOT break existing imports (keep barrel re-export).\n- Do NOT ship without 100% test coverage on moved helpers.\n\nPhases:\n1. Inventory: list functions and their callers.\n2. Group by domain: string, date, array, object.\n3. RED: ensure existing tests pass; add tests for any uncovered helper.\n4. GREEN: move helpers into domain files; keep original paths working via an index barrel.\n5. REFACTOR: apply SRP per module; remove dead code.\n6. Docs: JSDoc @param/@returns on every exported util; update README import examples.\n\nSOLID: SRP per module, OCP via barrel re-exports (add without touching consumers), ISP (slim module APIs).\nEdge cases: circular imports, tree-shaking, ts path aliases, deprecated helpers still used by tests."
+      }
+    },
+    {
+      "id": "refactor-medium",
+      "prompt": "refactor the API module to use async/await",
+      "without": {
+        "response": "Go through each function that returns a Promise and replace .then/.catch with async/await. Wrap in try/catch and rethrow. Keep return types the same.\n\n```ts\nasync function getUser(id: string) {\n  const res = await fetch(`/users/${id}`);\n  if (!res.ok) throw new Error('bad status');\n  return res.json();\n}\n```"
+      },
+      "with": {
+        "response": "Goal: Convert the API module from Promise chains to async/await.\nNorth Star: Readable, consistently-handled async code with no behavioral change.\n\nConstraints:\n- Do NOT change public API signatures or return types.\n- Do NOT swallow errors silently.\n- Do NOT introduce new dependencies.\n\nPhases:\n1. Identify all .then/.catch chains and shared error handling.\n2. RED: ensure existing tests cover success + failure + cancellation; add missing tests.\n3. GREEN: rewrite each function with async/await; preserve error semantics.\n4. REFACTOR: extract a fetchJson helper (SRP) for status checks + JSON parsing; inject fetch (DIP) for testability.\n5. Docs: JSDoc @param/@returns/@throws on each exported function; README snippet showing typed usage.\n\n```ts\n/**\n * Fetches and parses JSON, throwing on non-2xx.\n * @throws ApiError with status and message\n */\nexport async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {\n  const res = await fetch(url, init);\n  if (!res.ok) throw new ApiError(res.status, await safeText(res));\n  return res.json() as Promise<T>;\n}\n```\n\nSOLID: SRP (fetchJson one job), OCP (extend via init), DIP (injectable fetch). Edge cases: aborted requests, non-JSON responses, 204 No Content, network errors."
+      }
+    },
+    {
+      "id": "refactor-complex",
+      "prompt": "refactor the monolithic service into microservices",
+      "without": {
+        "response": "Start by splitting by domain boundaries. Identify bounded contexts (users, billing, orders), move each to its own service with its own database, add an API gateway in front, and use async messaging (e.g., RabbitMQ or Kafka) for cross-service events. Migrate incrementally with the strangler pattern."
+      },
+      "with": {
+        "response": "Goal: Decompose monolith into microservices per bounded context.\nNorth Star: Independent deploys, clearer ownership, no regression in user-visible behavior.\n\nConstraints:\n- Do NOT big-bang rewrite; use strangler pattern.\n- Do NOT share databases across services.\n- Do NOT remove the monolith until parity is proven in production.\n\nPhases:\n1. Map bounded contexts (users, billing, orders, notifications) and their data ownership.\n2. RED: define acceptance tests per context (contract + behavior) against current monolith.\n3. GREEN: extract first service (lowest-risk context) with its own DB; route via API gateway.\n4. RED/GREEN: add event bus for async integration; contract tests for producers/consumers.\n5. REFACTOR: enforce SOLID at service boundary: SRP per service, OCP via versioned contracts, ISP per client, DIP on transport.\n6. Docs: README per service; architecture diagram; runbooks; JSDoc on public contracts.\n7. Rollout: shadow traffic, canary, cutover, decommission monolith path.\n\nSOLID: each microservice is one responsibility; interfaces = API contracts; dependency inversion on transport and storage. Edge cases: distributed transactions (use Saga), idempotency, backward-compatible contract evolution, data migration windows, observability gaps."
+      }
+    },
+    {
+      "id": "docs-simple",
+      "prompt": "add documentation to the auth module",
+      "without": {
+        "response": "Add JSDoc comments on top of each exported function describing what it does, params, and return values. Optionally add a README.md in the auth folder with usage examples and environment variables needed."
+      },
+      "with": {
+        "response": "Goal: Add comprehensive docs to the auth module.\nNorth Star: A new contributor can configure and use auth in < 10 minutes.\n\nConstraints:\n- Do NOT change code behavior while documenting.\n- Do NOT leak secrets or real tokens in examples.\n- Do NOT document private internals as public API.\n\nPhases:\n1. Inventory public exports in auth/: classes, functions, middleware, types.\n2. Add JSDoc @param/@returns/@throws on every public symbol.\n3. Add an auth/README.md with overview, setup, env vars, usage snippets for login/logout/refresh/middleware.\n4. Add inline comments only where the 'why' is non-obvious (e.g., constant-time compare, token rotation policy).\n5. Update top-level README to link to auth/README.md.\n6. Validate: run typedoc or similar to confirm docs build.\n\nSOLID: keep docs close to the abstraction (ISP); document contracts, not implementations. Edge cases: deprecated helpers, multiple token providers, test-only utilities that should be excluded from public docs."
+      }
+    },
+    {
+      "id": "test-simple",
+      "prompt": "add tests for the user service",
+      "without": {
+        "response": "Use Jest. For each UserService method, create a describe block. Mock the repository. Cover happy path and a couple of error cases.\n\n```ts\ndescribe('UserService', () => {\n  it('creates a user', async () => {\n    const repo = { save: jest.fn().mockResolvedValue({ id: 1 }) };\n    const svc = new UserService(repo as any);\n    await expect(svc.create({ name: 'a' })).resolves.toEqual({ id: 1 });\n  });\n});\n```"
+      },
+      "with": {
+        "response": "Goal: Add tests for UserService using TDD RED-GREEN-REFACTOR discipline.\nNorth Star: Every public method has behavior tests + edge cases.\n\nConstraints:\n- Do NOT test implementation details; test behavior.\n- Do NOT skip error paths.\n- Do NOT rely on real DB in unit tests.\n\nPhases:\n1. Inventory UserService public API.\n2. RED: write failing tests per method covering success, invalid input, not-found, conflict, boundary sizes.\n3. GREEN: run existing implementation; fix any revealed bugs minimally.\n4. REFACTOR: extract fakes for the repository (DIP); ensure SRP in tests (one behavior per test).\n5. Docs: JSDoc on test helpers; README section on running tests and coverage targets.\n\n```ts\n/**\n * Creates a new user given valid input.\n * @throws ValidationError on invalid name\n * @throws ConflictError if email already exists\n */\ndescribe('UserService.create', () => {\n  it('returns a user on valid input', async () => { /* ... */ });\n  it('throws ValidationError on empty name', async () => { /* ... */ });\n  it('throws ConflictError on duplicate email', async () => { /* ... */ });\n  it('handles repository failure and propagates ApiError', async () => { /* ... */ });\n});\n```\n\nSOLID: DIP via injected repo fake; SRP per test; ISP for slim test doubles. Edge cases: concurrent creates, unicode names, extremely long inputs, null/undefined, case-insensitive email uniqueness."
+      }
+    }
+  ]
+}
