@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-04-24T05:56:17.781Z",
+  "timestamp": "2026-04-24T06:25:04.510Z",
   "tokenizer": "gpt-tokenizer (cl100k_base) — used as an offline proxy; absolute counts are ~5% of true Claude values but the RATIO between classic and lean is stable",
   "hook": {
     "classicTokens": 319,
-    "leanTokens": 104,
-    "savingsPct": 67.4
+    "leanTokens": 122,
+    "savingsPct": 61.8
   },
   "perPrompt": [
     {
@@ -344,7 +344,7 @@
     "averageSavingsPct": 53.1,
     "averageQualityRetentionPct": 101.1,
     "combinedFirstTurnTaxClassic": 733,
-    "combinedFirstTurnTaxLean": 298,
-    "combinedFirstTurnSavingsPct": 59.3
+    "combinedFirstTurnTaxLean": 316,
+    "combinedFirstTurnSavingsPct": 56.9
   }
 }

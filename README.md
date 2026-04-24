@@ -3,10 +3,10 @@
 > Transform vague prompts into precise, well-structured instructions using Greg Isenberg's "10 Rules for Claude Code"
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-2.4.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-2.4.1-blue.svg)]()
 [![Claude Code Plugin](https://img.shields.io/badge/Claude%20Code-Plugin-purple.svg)]()
 [![Lean Mode](https://img.shields.io/badge/Lean%20Mode-default-brightgreen.svg)]()
-[![First-turn tax](https://img.shields.io/badge/first--turn%20tax-%E2%88%9259%25%20tokens-brightgreen.svg)]()
+[![First-turn tax](https://img.shields.io/badge/first--turn%20tax-%E2%88%9257%25%20tokens-brightgreen.svg)]()
 
 ---
 
@@ -30,7 +30,7 @@ flowchart LR
 | No TDD mention | RED-GREEN-REFACTOR workflow |
 | No architecture | SOLID principles applied |
 
-> 🪶 **New in v2.4.0 — [Lean Mode is now the default](#lean-mode-default-since-v240):** zero-config, auto-bootstrapped on first session. Cuts **59.3% of first-turn tokens** (733 → 298) while keeping 100% of the quality signals, and now also carries a session-wide `<response-style>` hint that tightens Claude's replies. Set `"lean": false` in `.claude/architect-config.json` to restore v2.2.1 verbose behavior.
+> 🪶 **New in v2.4 — [Lean Mode is now the default](#lean-mode-default-since-v240):** zero-config, auto-bootstrapped on first session. Cuts **56.9% of first-turn tokens** (733 → 316) while keeping 100% of the quality signals, carries a session-wide `<response-style>` hint that tightens Claude's replies, and prints a one-line `✨ 10x Lean active` banner so you can see it's working. Set `"lean": false` to restore v2.2.1 verbose; set `"showAck": false` for silent mode.
 
 <details>
 <summary>📊 See benchmarks and methodology (with honest disclaimers)</summary>
@@ -171,18 +171,78 @@ That's it. On your next Claude Code session the plugin:
 1. Install plugin (above).
 2. Start a new Claude Code         SessionStart hook fires once.
    session in any project.         Writes .claude/architect-config.json
-                                   with lean:true.
-3. Type a task, e.g.               Claude already has the 6 principles
+                                   with lean:true, showAck:true.
+3. Your FIRST Claude reply         Claude prints the one-line banner
+   this session.                     ✨ 10x Lean active
+                                   so you know the plugin loaded.
+4. Type a task, e.g.               Claude already has the 6 principles
    "add JWT auth"                  in context. Replies with goal,
                                    constraints, phased plan, TDD cycle,
                                    docs, SOLID — and stays terse.
-4. Want full verbose output?       Edit .claude/architect-config.json,
+5. Want full verbose output?       Edit .claude/architect-config.json,
                                    set "lean": false. Reopen session.
-5. Want richer control for a       /architect [task]  or
+6. Want the banner gone?           Set "showAck": false. Reopen session.
+7. Want richer control for a       /architect [task]  or
    single task?                    /architect --lean [task]
 ```
 
 No `.claude/architect-config.json` needs to exist beforehand — the hook creates it. Nothing else ever needs to be installed or configured.
+
+---
+
+## How to verify it's working
+
+Two ways — pick whichever you trust more.
+
+### A) From inside Claude Code (recommended)
+
+1. Install the plugin (see above).
+2. Open a **fresh** session in any project directory.
+3. Send any message (e.g. `hello`).
+4. **Expected:** Claude's first reply begins with the single line `✨ 10x Lean active`. That's the `<ack>` hint firing.
+5. **Expected:** `.claude/architect-config.json` now exists in that project with `lean:true` and `showAck:true`. Verify from your shell:
+   ```bash
+   cat .claude/architect-config.json
+   ```
+
+If the banner does not appear: check that the plugin is installed (`/plugin list` in Claude Code) and that your session was started **after** install. Hooks don't hot-reload — the session must be new.
+
+### B) From the shell (no Claude Code needed)
+
+The hook is a plain bash script. You can run it standalone to confirm the JSON payload it emits:
+
+```bash
+# Clone or install the plugin, then:
+cd path/to/10x-architect-marketplace
+
+# 1. Fresh install simulation — no config, should emit Lean + bootstrap config
+TMP=$(mktemp -d)
+CLAUDE_PROJECT_DIR="$TMP" bash hooks/session-start.sh | python3 -m json.tool
+cat "$TMP/.claude/architect-config.json"
+rm -rf "$TMP"
+
+# 2. Run the full token-savings benchmark (offline, no API key)
+cd benchmarks
+npm install                      # first time only
+node run-token-benchmark.js
+
+# 3. Run the response-compression lower-bound benchmark
+node run-response-compression-benchmark.js
+
+# 4. Run the original structure benchmark (no regressions since v2.2.1)
+node run-benchmark-direct.js
+```
+
+Expected from step 2:
+```
+SessionStart hook:           319 → 122 tokens  (-61.8%)
+/architect (10 prompts avg): 414 → 194 tokens  (-53.1%)
+Combined first-turn tax:     733 → 316 tokens  (-56.9%)
+Quality-signal retention:    101.1% (9-pattern rubric)
+✅ Targets met: savings ≥50%, retention ≥95%, hook savings ≥60%
+```
+
+The benchmark exits non-zero if any target regresses — safe to run in CI.
 
 ---
 
@@ -827,9 +887,10 @@ Run `node benchmarks/run-token-benchmark.js` locally to reproduce. Full per-prom
 
 | Surface | Classic | Lean | Savings |
 |---------|:-------:|:----:|:-------:|
-| SessionStart hook (once / session) | 319 tok | 104 tok | **−67.4%** |
+| SessionStart hook, showAck:true (default) | 319 tok | 122 tok | **−61.8%** |
+| SessionStart hook, showAck:false (silent) | 319 tok | 104 tok | **−67.4%** |
 | `/architect` enhancement (avg of 10 test prompts) | 414 tok | 194 tok | **−53.1%** |
-| Combined first-turn tax | 733 tok | 298 tok | **−59.3%** |
+| Combined first-turn tax (default) | 733 tok | 316 tok | **−56.9%** |
 
 Structure-score retention on the 9-pattern rubric used by `run-benchmark-direct.js`:
 
@@ -936,7 +997,8 @@ architect --mode=C refactor database layer
   "mode": "C",
   "autoDetect": true,
   "autoApproveTimeout": 5,
-  "lean": true
+  "lean": true,
+  "showAck": true
 }
 ```
 
@@ -945,7 +1007,8 @@ architect --mode=C refactor database layer
 | `mode` | `A\|B\|C` | `C` | Execution mode |
 | `autoDetect` | `boolean` | `true` | Scan for project tech stack |
 | `autoApproveTimeout` | `number` | `5` | Seconds before auto-execute in mode C |
-| `lean` | `boolean` | `true` | **v2.4.0+ default** — compact XML + response-style hint, ~59% first-turn token savings, 100% signal retention. Set `false` to restore v2.2.1 verbose behavior. See [Lean Mode](#lean-mode-default-since-v240). |
+| `lean` | `boolean` | `true` | **v2.4.0+ default** — compact XML + response-style hint, ~57% first-turn token savings, 100% signal retention. Set `false` to restore v2.2.1 verbose behavior. See [Lean Mode](#lean-mode-default-since-v240). |
+| `showAck` | `boolean` | `true` | **v2.4.1+** — when `true`, Claude's first reply in each session starts with `✨ 10x Lean active` so you can see the plugin loaded. Set `false` for a truly silent mode once you trust it. Costs ~24 tokens/session. |
 
 ---
 
@@ -1019,7 +1082,10 @@ A: It's optimized for development tasks. Simple questions pass through with mini
 A: System prompts are static. 10x Architect dynamically adapts to each request.
 
 **Q: How much does the plugin itself cost in tokens?**
-A: Default (Lean, v2.4.0+): ~104 tokens per session (SessionStart hook) + ~194 per `/architect` invocation. Opt-out (Classic, `"lean": false`): ~319 + ~414, matching v2.2.1. See [Lean Mode](#lean-mode-default-since-v240).
+A: Default (Lean + ack, v2.4.1+): ~122 tokens per session (SessionStart hook) + ~194 per `/architect` invocation. Silent Lean (`"showAck": false`): ~104 + ~194. Opt-out (Classic, `"lean": false`): ~319 + ~414, matching v2.2.1. See [Lean Mode](#lean-mode-default-since-v240).
+
+**Q: How do I know the plugin is actually running?**
+A: Claude's first reply in each new session starts with `✨ 10x Lean active` (in Lean Mode, default) or `✨ 10x Architect Active` (in Classic). That's the `<ack>` hint firing. The config file `.claude/architect-config.json` is also written to your project on first session — check it with `cat .claude/architect-config.json`. See [How to verify it's working](#how-to-verify-its-working) for a full checklist.
 
 **Q: Does Lean Mode reduce quality?**
 A: On the measurable rubric — no. The 9-pattern structure score stays at 100% because the Lean template is deterministic and always emits every required keyword (`goal`, `North Star`, `Do NOT`, `phases`, `TDD`, `RED-GREEN-REFACTOR`, `JSDoc`, `README`, `SOLID`, `edge case`, `step-by-step`). What Lean Mode drops is decoration (markdown headers, long prose examples) and per-task elaboration inside each section. If you want Claude to see richer task-specific guidance in `/architect` output, set `"lean": false`.

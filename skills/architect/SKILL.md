@@ -9,7 +9,7 @@ Transform any request into an optimized prompt using the **10 Rules for Claude C
 
 ## Visual Feedback
 
-- **Lean Mode (default, v2.4.0+)** — the plugin is quiet. No banner, no acknowledgment. Evidence it's active: Claude's replies start following the principles and stay terse.
+- **Lean Mode (default, v2.4.1+)** — Claude's first reply in the session starts with `✨ 10x Lean active` so you can see the plugin loaded. Set `"showAck": false` in `.claude/architect-config.json` for truly silent mode.
 - **Classic Mode (`"lean": false`)** — you still see the v2.2.1-era banner:
 
 ```

@@ -61,15 +61,15 @@ function scoreText(s) {
 
 function extractHookContexts() {
   const src = fs.readFileSync(HOOK_FILE, 'utf8');
-  // Each branch has an additionalContext field. Capture both by pulling the
-  // two additionalContext string literals from the shell heredoc blocks.
+  // The hook may emit several payload variants (lean-with-ack, lean-silent,
+  // classic). By convention, the first additionalContext is the primary Lean
+  // payload and the last is the Classic opt-out payload.
   const re = /"additionalContext":\s*"((?:[^"\\]|\\.)*)"/g;
   const out = [];
   let m;
   while ((m = re.exec(src)) !== null) out.push(unescapeJsonString(m[1]));
   if (out.length < 2) throw new Error('Could not parse both hook payloads from ' + HOOK_FILE);
-  // In session-start.sh, lean payload comes first (if branch), classic second (else).
-  return { lean: out[0], classic: out[1] };
+  return { lean: out[0], classic: out[out.length - 1] };
 }
 
 function unescapeJsonString(s) {

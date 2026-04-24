@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
-# SessionStart hook for 10x Architect plugin (v2.4.0).
+# SessionStart hook for 10x Architect plugin (v2.4.1).
 #
 # Default behavior (no config file present): Lean Mode is ACTIVE.
 # The hook also writes a default .claude/architect-config.json on first
 # run so the user can discover and edit their settings later.
 #
-# User overrides:
-#   {"lean": false} in .claude/architect-config.json  -> Classic payload
-#   {"lean": true}  or no file                        -> Lean payload
+# User overrides (both read from .claude/architect-config.json):
+#   "lean": false     -> Classic payload (v2.2.1 verbose behavior)
+#   "showAck": false  -> drop the in-chat "✨ 10x Lean active" banner
+#                        (silent mode; useful once you trust the plugin)
 #
 # Payloads:
-#   Lean    ~100 tok  - compact XML + response-style hint (default)
+#   Lean    ~110 tok  - compact XML + response-style hint (default)
 #   Classic ~319 tok  - verbose markdown (v2.2.1 behavior, opt-out)
 #
 # The hook is idempotent and never fails the session: filesystem write
@@ -22,12 +23,16 @@ PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$PWD}"
 CONFIG_DIR="$PROJECT_DIR/.claude"
 CONFIG_FILE="$CONFIG_DIR/architect-config.json"
 LEAN="true"
+SHOW_ACK="true"
 
 if [ -f "$CONFIG_FILE" ]; then
-  # Respect an explicit opt-out. Anything else (including malformed JSON,
-  # missing key, or "lean": true) falls through to Lean.
+  # Respect explicit opt-outs. Anything else (missing key, malformed
+  # JSON, "true") falls through to the defaults.
   if grep -qE '"lean"[[:space:]]*:[[:space:]]*false' "$CONFIG_FILE" 2>/dev/null; then
     LEAN="false"
+  fi
+  if grep -qE '"showAck"[[:space:]]*:[[:space:]]*false' "$CONFIG_FILE" 2>/dev/null; then
+    SHOW_ACK="false"
   fi
 else
   # First run: bootstrap a default config so the user has something to edit.
@@ -38,14 +43,25 @@ else
   "mode": "C",
   "autoDetect": true,
   "autoApproveTimeout": 5,
-  "lean": true
+  "lean": true,
+  "showAck": true
 }
 CONFIG
   fi
 fi
 
 if [ "$LEAN" = "true" ]; then
-  cat <<'EOF'
+  if [ "$SHOW_ACK" = "true" ]; then
+    cat <<'EOF'
+{
+  "hookSpecificOutput": {
+    "hookEventName": "SessionStart",
+    "additionalContext": "<10x-architect>\n<principles>\nGOAL+North Star; Do NOT ≥2; 3-6 phases;\nTDD RED-GREEN-REFACTOR; JSDoc+README; SOLID(SRP/OCP/LSP/ISP/DIP).\n</principles>\n<response-style>terse by default; preserve code/commands/paths verbatim; skip filler prose</response-style>\n<ack>Start first reply with: ✨ 10x Lean active</ack>\n<invoke>/architect [task] for full guidance</invoke>\n</10x-architect>"
+  }
+}
+EOF
+  else
+    cat <<'EOF'
 {
   "hookSpecificOutput": {
     "hookEventName": "SessionStart",
@@ -53,6 +69,7 @@ if [ "$LEAN" = "true" ]; then
   }
 }
 EOF
+  fi
 else
   cat <<'EOF'
 {
