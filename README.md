@@ -31,7 +31,7 @@ flowchart LR
 | No TDD mention | RED-GREEN-REFACTOR workflow |
 | No architecture | SOLID principles applied |
 
-> 🖥️ **New in v2.5 — [Cursor support](#cursor-installation-v250):** copy one `.mdc` file and get the same 10x principles in every Cursor chat. 100% quality-signal score at 146 tokens/session (lean default with visible `10x` ack).
+> 🖥️ **New in v2.5 — [Cursor support](#cursor-installation-v250):** copy one `.mdc` file and get the same 10x principles in every Cursor chat. 100% quality-signal score at 170 tokens/session (lean default with visible `10x` ack).
 
 > 🪶 **New in v2.4 — [Lean Mode is now the default](#lean-mode-default-since-v240):** zero-config, auto-bootstrapped on first session. Cuts **56.9% of first-turn tokens** (733 → 316) while keeping 100% of the quality signals, carries a session-wide `<response-style>` hint that tightens Claude's replies, and prints a one-line `✨ 10x Lean active` banner so you can see it's working. Set `"lean": false` to restore v2.2.1 verbose; set `"showAck": false` for silent mode.
 
@@ -222,7 +222,7 @@ Open a new Cursor chat and type any task. The AI should:
 | `✨ 10x Lean active` banner | ✅ | ❌ |
 | `/architect [task]` full breakdown | ✅ | Type `architect: [task]` in chat |
 | Works with any AI model in IDE | ❌ (Claude only) | ✅ (GPT-4o, Claude, etc.) |
-| Token cost per session | ~122 tok | ~146 tok (lean default) |
+| Token cost per session | ~122 tok | ~170 tok (lean default) |
 | Quality-signal score | 100% | 100% |
 
 ### Cursor benchmark results
@@ -234,14 +234,14 @@ Variant                              Tokens  Signals    Score
 ────────────────────────────────────────────────────────────
 No rule (baseline)                        0     0/10     0.0%
 Plain .cursorrules                       27     2/10    20.0%
-10x .mdc (body only)                    146    10/10   100.0%
-10x .mdc (full incl. front)             187    10/10   100.0%
+10x .mdc (body only)                    170    10/10   100.0%
+10x .mdc (full incl. front)             211    10/10   100.0%
 
 ✅ Quality gate: 100.0% ≥ 90%
-✅ Token gate: 146 tokens ≤ 350 ceiling
+✅ Token gate: 170 tokens ≤ 350 ceiling
 ```
 
-The plain `.cursorrules` baseline (27 tokens, 2 signals) shows how much the structured rule adds for the token cost. 146 tokens is the lean "always-on tax" for having 10/10 signals present in every Cursor chat, including a visible `10x` acknowledgment in new chats.
+The plain `.cursorrules` baseline (27 tokens, 2 signals) shows how much the structured rule adds for the token cost. 170 tokens is the lean "always-on tax" for having 10/10 signals present in every Cursor chat, including a visible `10x` acknowledgment in new chats.
 
 ### Cursor lean savings benchmark
 
@@ -249,8 +249,8 @@ Run `node benchmarks/run-cursor-lean-benchmark.js` to compare classic vs lean Cu
 
 ```
 Classic body tokens: 285
-Lean body tokens:    146
-Token savings:       48.8%
+Lean body tokens:    170
+Token savings:       40.4%
 
 Classic signals:     10/10 (100.0%)
 Lean signals:        10/10 (100.0%)
@@ -258,6 +258,12 @@ Signal retention:    100.0%
 ```
 
 This gives Cursor the same feature shape as Claude Lean Mode: keep the full signal set while reducing rule token overhead.
+
+How Cursor saves tokens without dropping quality:
+- Keep the same required quality anchors (`North Star`, `Do NOT`, `phases`, `TDD`, `RED-GREEN-REFACTOR`, `JSDoc`, `README`, `SOLID`, `edge case`, `step-by-step`).
+- Compress wording into short structured tags instead of verbose markdown prose.
+- Remove decorative headers/examples while preserving the exact scoring hooks.
+- Use a minimal visible acknowledgment (`10x`) instead of a longer banner.
 
 ---
 
@@ -1216,7 +1222,7 @@ A: It's optimized for development tasks. Simple questions pass through with mini
 A: In Claude Code, the SessionStart hook injects the principles once per session and the `/architect` command generates a task-specific structured breakdown on demand — so guidance adapts to each task. In Cursor, the `.mdc` rule is always-on (like a system prompt), but typing `architect: [task]` in chat triggers a full per-task breakdown from the AI.
 
 **Q: How much does the plugin itself cost in tokens?**
-A: **Claude Code** — default (Lean + ack): ~122 tokens/session + ~194 per `/architect` call. Silent Lean (`"showAck": false`): ~104 + ~194. Classic (`"lean": false`): ~319 + ~414. **Cursor** — lean always-apply rule body: ~146 tokens/session (includes minimal visible `10x` acknowledgment). Classic reference body is ~285; lean saves ~48.8% at 100% signal retention. See [Lean Mode](#lean-mode-default-since-v240) and [Cursor benchmark](#cursor-benchmark-results).
+A: **Claude Code** — default (Lean + ack): ~122 tokens/session + ~194 per `/architect` call. Silent Lean (`"showAck": false`): ~104 + ~194. Classic (`"lean": false`): ~319 + ~414. **Cursor** — lean always-apply rule body: ~170 tokens/session (includes minimal visible `10x` acknowledgment). Classic reference body is ~285; lean saves ~40.4% at 100% signal retention. See [Lean Mode](#lean-mode-default-since-v240) and [Cursor benchmark](#cursor-benchmark-results).
 
 **Q: How do I know the plugin is actually running?**
 A: Claude's first reply in each new session starts with `✨ 10x Lean active` (in Lean Mode, default) or `✨ 10x Architect Active` (in Classic). That's the `<ack>` hint firing. The config file `.claude/architect-config.json` is also written to your project on first session — check it with `cat .claude/architect-config.json`. See [How to verify it's working](#how-to-verify-its-working) for a full checklist.
@@ -1243,7 +1249,7 @@ A: Yes. The `.mdc` rule is plain markdown instructions that any model can follow
 A: Type `architect: [task]` in the Cursor chat. Example: `architect: add JWT authentication to the Express API`. The AI will respond with a full structured breakdown (goal, constraints, phases, TDD, SOLID) because the always-apply rule instructs it to do so when asked with that pattern.
 
 **Q: How much does the Cursor rule cost in tokens?**
-A: Lean default is ~146 tokens per chat session (rule body injected by Cursor), including the minimal visible `10x` acknowledgment on new chats. Full file with frontmatter is ~187 tokens, but YAML frontmatter is metadata Cursor reads, not injected into AI context. For classic-vs-lean savings, run `node benchmarks/run-cursor-lean-benchmark.js` (classic 285 -> lean 146, -48.8%, 100% retention). For baseline rule costs, run `node benchmarks/run-cursor-benchmark.js`.
+A: Lean default is ~170 tokens per chat session (rule body injected by Cursor), including the minimal visible `10x` acknowledgment on new chats. Full file with frontmatter is ~211 tokens, but YAML frontmatter is metadata Cursor reads, not injected into AI context. For classic-vs-lean savings, run `node benchmarks/run-cursor-lean-benchmark.js` (classic 285 -> lean 170, -40.4%, 100% retention). For baseline rule costs, run `node benchmarks/run-cursor-benchmark.js`.
 
 ---
 

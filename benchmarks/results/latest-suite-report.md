@@ -13,16 +13,16 @@
 |---|---:|---:|---:|
 | No rule (baseline) | 0 | 0/10 | 0.0% |
 | Plain `.cursorrules` | 27 | 2/10 | 20.0% |
-| 10x `.mdc` (body only) | 146 | 10/10 | 100.0% |
+| 10x `.mdc` (body only) | 170 | 10/10 | 100.0% |
 
 Additional script output:
-- `10x .mdc (full incl. front)`: 187 tokens, 10/10, 100.0%
+- `10x .mdc (full incl. front)`: 211 tokens, 10/10, 100.0%
 
 ## 1b) Cursor Classic vs Lean
 
 | Metric | Classic | Lean | Delta |
 |---|---:|---:|---:|
-| Body tokens | 285 | 146 | -48.8% |
+| Body tokens | 285 | 170 | -40.4% |
 | Signals | 10/10 | 10/10 | 0 |
 | Quality-signal retention | 100.0% | 100.0% | 0.0% |
 
@@ -48,9 +48,9 @@ Additional script output:
 
 - `run-cursor-benchmark.js`: PASS
   - Quality gate: 100.0% >= 90%
-  - Token gate: 146 tokens <= 350 ceiling
+  - Token gate: 170 tokens <= 350 ceiling
 - `run-cursor-lean-benchmark.js`: PASS
-  - Token savings gate: 48.8% >= 40%
+  - Token savings gate: 40.4% >= 40%
   - Retention gate: 100.0% >= 95%
 - `run-token-benchmark.js`: PASS
   - Targets met: savings >= 50%, retention >= 95%, hook savings >= 60%

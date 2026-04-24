@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-04-24T15:12:02.168Z",
+  "timestamp": "2026-04-24T15:16:10.996Z",
   "gatesPass": true,
   "gates": {
     "minSavingsPercent": 40,
@@ -14,13 +14,13 @@
   },
   "lean": {
     "file": "cursor/rules/10x-architect.mdc",
-    "bodyTokens": 146,
+    "bodyTokens": 170,
     "signalsFound": 10,
     "signalTotal": 10,
     "scorePercent": 100
   },
   "deltas": {
-    "tokenSavingsPercent": 48.8,
+    "tokenSavingsPercent": 40.4,
     "qualityRetentionPercent": 100
   }
 }

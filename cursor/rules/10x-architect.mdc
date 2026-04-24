@@ -4,11 +4,11 @@ alwaysApply: true
 ---
 
 <10x-architect>
-<core>Goal + North Star. >=2 Do NOT constraints. 3-6 phases, step-by-step.</core>
-<tdd>TDD RED-GREEN-REFACTOR; tests first; edge case + errors.</tdd>
-<docs>JSDoc @param/@returns; README for user-facing changes.</docs>
+<core>Goal + North Star first. >=2 Do NOT constraints. 3-6 phases; complete each before next; step-by-step.</core>
+<tdd>TDD RED-GREEN-REFACTOR; failing tests first; every function has tests; cover edge case + errors.</tdd>
+<docs>JSDoc @param/@returns on functions; README for user-facing changes; comment complex logic for why.</docs>
 <solid>SOLID (SRP/OCP/LSP/ISP/DIP).</solid>
 <ack>First assistant message in new chat begins: 10x</ack>
-<response-style>terse; preserve code/commands/paths; no filler.</response-style>
+<response-style>terse; preserve code/commands/paths verbatim; no filler prose.</response-style>
 <invoke>architect: [task]</invoke>
 </10x-architect>

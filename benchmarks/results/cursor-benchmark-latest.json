@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-04-24T15:12:02.046Z",
+  "timestamp": "2026-04-24T15:16:10.872Z",
   "gatesPass": true,
   "tokenCeiling": 350,
   "qualityFloor": 90,
@@ -17,13 +17,13 @@
       "scorePercent": 20
     },
     "10x .mdc (body only)": {
-      "tokens": 146,
+      "tokens": 170,
       "signalsFound": 10,
       "signalTotal": 10,
       "scorePercent": 100
     },
     "10x .mdc (full incl. front)": {
-      "tokens": 187,
+      "tokens": 211,
       "signalsFound": 10,
       "signalTotal": 10,
       "scorePercent": 100
