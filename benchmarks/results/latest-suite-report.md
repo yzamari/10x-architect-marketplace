@@ -3,6 +3,7 @@
 - Date: 2026-04-24
 - Commands run:
   - `node run-cursor-benchmark.js`
+  - `node run-cursor-lean-benchmark.js`
   - `node run-token-benchmark.js`
   - `node run-benchmark-direct.js`
 
@@ -12,10 +13,18 @@
 |---|---:|---:|---:|
 | No rule (baseline) | 0 | 0/10 | 0.0% |
 | Plain `.cursorrules` | 27 | 2/10 | 20.0% |
-| 10x `.mdc` (body only) | 290 | 10/10 | 100.0% |
+| 10x `.mdc` (body only) | 137 | 10/10 | 100.0% |
 
 Additional script output:
-- `10x .mdc (full incl. front)`: 339 tokens, 10/10, 100.0%
+- `10x .mdc (full incl. front)`: 178 tokens, 10/10, 100.0%
+
+## 1b) Cursor Classic vs Lean
+
+| Metric | Classic | Lean | Delta |
+|---|---:|---:|---:|
+| Body tokens | 285 | 137 | -51.9% |
+| Signals | 10/10 | 10/10 | 0 |
+| Quality-signal retention | 100.0% | 100.0% | 0.0% |
 
 ## 2) Lean Token Benchmark
 
@@ -39,7 +48,10 @@ Additional script output:
 
 - `run-cursor-benchmark.js`: PASS
   - Quality gate: 100.0% >= 90%
-  - Token gate: 290 tokens <= 350 ceiling
+  - Token gate: 137 tokens <= 350 ceiling
+- `run-cursor-lean-benchmark.js`: PASS
+  - Token savings gate: 51.9% >= 40%
+  - Retention gate: 100.0% >= 95%
 - `run-token-benchmark.js`: PASS
   - Targets met: savings >= 50%, retention >= 95%, hook savings >= 60%
 - `run-benchmark-direct.js`: PASS

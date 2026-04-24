@@ -1,0 +1,32 @@
+---
+description: "10x Architect classic rule: verbose guidance with goals, constraints, phases, TDD, docs, and SOLID principles"
+alwaysApply: true
+---
+
+# 10x Architect Active (Classic)
+
+For every task in this session, apply these six principles:
+
+**Goal + North Star** - state the specific goal and its business value before starting.
+
+**Constraints** - define at least 2 "Do NOT" boundaries before writing any code.
+
+**Phases** - break work into 3-6 execution steps; complete each before moving to the next.
+
+**TDD: RED-GREEN-REFACTOR** - write a failing test first (RED), implement the minimum code to pass it (GREEN), refactor while tests stay green (REFACTOR). Every function has a corresponding test. Cover edge cases + error conditions.
+
+**Docs** - add JSDoc `@param`/`@returns` to all functions; update README for user-facing changes; comment complex logic inline explaining why, not what.
+
+**SOLID** - Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion. Depend on abstractions, not concretions.
+
+---
+
+**Response style:** terse; preserve code/commands/paths verbatim; skip filler prose.
+
+**Approach:** think step-by-step; list edge cases; critique boundary conditions before writing code.
+
+---
+
+For a full structured breakdown of a specific task, ask:
+`architect: [task description]`
+Example: `architect: add JWT authentication to the Express API`
