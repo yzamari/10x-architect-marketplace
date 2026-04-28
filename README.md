@@ -3,7 +3,7 @@
 > Transform vague prompts into precise, well-structured instructions using Greg Isenberg's "10 Rules for Claude Code"
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-2.5.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-2.6.0-blue.svg)]()
 [![Claude Code Plugin](https://img.shields.io/badge/Claude%20Code-Plugin-purple.svg)]()
 [![Cursor](https://img.shields.io/badge/Cursor-Rules%20support-6366f1.svg)]()
 [![Lean Mode](https://img.shields.io/badge/Lean%20Mode-default-brightgreen.svg)]()
@@ -937,6 +937,8 @@ node run-cursor-benchmark.js
 node run-cursor-lean-benchmark.js
 
 # Benchmark 7: Cursor A/B from real chat captures (offline, no API key) — v2.6.0+
+# The checked-in `cursor-ab-latest.simulation.*` files are labeled simulations;
+# publish claims from `cursor-ab-latest.*` only after filling real responses.
 # 1) Generate a scaffold for the 10 canonical prompts:
 node generate-cursor-ab-scaffold.js
 # 2) In the target project (where the .mdc rule is installed), toggle the rule off:

@@ -4,6 +4,9 @@
   "description": "Benchmark suite for 10x Architect plugin",
   "main": "run-benchmark.js",
   "scripts": {
+    "test": "npm run verify",
+    "verify": "npm run verify:project && npm run benchmark:cursor && npm run benchmark:cursor:lean && npm run benchmark:tokens && npm run benchmark:structure",
+    "verify:project": "node verify-project.js",
     "benchmark": "node run-benchmark.js",
     "benchmark:structure": "node run-benchmark-direct.js",
     "benchmark:tokens": "node run-token-benchmark.js",

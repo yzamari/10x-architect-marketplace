@@ -174,6 +174,7 @@ function runBenchmark(enhancedPrompts) {
   // Save results
   const output = {
     timestamp: new Date().toISOString(),
+    gatesPass: parseFloat(avgEnhanced) >= 90 && parseFloat(improvement) > 0,
     summary: { avgOriginal, avgEnhanced, improvement },
     results
   };

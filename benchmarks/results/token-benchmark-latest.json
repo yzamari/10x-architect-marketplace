@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-04-24T09:26:46.829Z",
+  "timestamp": "2026-04-26T05:40:58.524Z",
   "tokenizer": "gpt-tokenizer (cl100k_base) — used as an offline proxy; absolute counts are ~5% of true Claude values but the RATIO between classic and lean is stable",
   "hook": {
     "classicTokens": 319,

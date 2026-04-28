@@ -1,8 +1,9 @@
-# Cursor MDC A/B Benchmark
+# Cursor MDC A/B Benchmark (Simulation)
 
 - Timestamp: 2026-04-24T09:16:26.680Z
 - Sample size: 10
-- Input: `/Users/yahavzamari/Projects/GitHub/10x-architect-marketplace/benchmarks/results/cursor-ab-samples.json`
+- Input: `/Users/yahavzamari/Projects/GitHub/10x-architect-marketplace/benchmarks/results/cursor-ab-samples.simulation.json`
+- Scope: simulation only; publish real captured results from `cursor-ab-latest.*` after filling `cursor-ab-samples.json`.
 
 ## Summary
 
